@@ -60,6 +60,7 @@
 
 body {
 	background: #1f253d;
+  background-color: #1f253d;
 }
 
 ul {
@@ -83,6 +84,8 @@ p {
 a {
 	text-decoration: none;
 	font-size: 15px;
+  color: #000000;
+  text-decoration: none;
 }
 	a:hover {
 		text-decoration: underline;
@@ -237,9 +240,7 @@ h1, h2, p, a, span{
 
 .main-container {
 	font-family: 'Ubuntu', sans-serif;
-	width: 950px;
-	height: 1725px;
-	margin: 6em auto;
+	margin: 2em auto;
 }
 	/*********************************************** HEADER ***********************************************/
 	header {
@@ -313,6 +314,15 @@ h1, h2, p, a, span{
 	.container {
 		float: left;
 		width: 300px;
+	}
+  .rescontainer {
+		float: left;
+		width: 600px;
+	}
+
+  .resultscontainer {
+		float: left;
+		width: 800px;
 	}
 		.block {
 			margin-bottom: 25px;
@@ -950,7 +960,7 @@ h1, h2, p, a, span{
 						background: #0F9295;
 					}
 			.account {
-				height: 500px;
+				
 			}
 				.account .titular {
 					padding: 10px 0;

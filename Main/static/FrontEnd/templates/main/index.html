@@ -1,9 +1,16 @@
 <link href="{{ url_for('static', filename='FrontEnd/styles/mainstyles.css') }}" rel="stylesheet" type="text/css" media="all">
 <link href="{{ url_for('static', filename='FrontEnd/styles/customform.css') }}" rel="stylesheet" type="text/css" media="all">
 <script type="text/javascript" src="{{ url_for('static', filename='FrontEnd/js/form.js') }}"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
 <script src="https://kit.fontawesome.com/c8440d1d5a.js" crossorigin="anonymous"></script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<body>
+<body style="background-color: #1f253d;">
 
     <div class="main-container">
 
@@ -11,33 +18,34 @@
         <header class="block">
             <ul class="header-menu horizontal-list">
                 <li>
-                    <a class="header-menu-tab" href="#2"><span class="icon fontawesome-user scnd-font-color"></span>Account</a>
-                    <a class="header-menu-number" href="#4">5</a>
+                    <a class="header-menu-tab" style='color: #FFFFFF;text-decoration: none;' href="#2"><span class="icon fontawesome-user scnd-font-color"></span>Account</a>
+                    <a class="header-menu-number" style='color: #FFFFFF;text-decoration: none;' href="#4">5</a>
                 </li>
 
                 <li>
-                    <a class="header-menu-tab" href="#1"><span class="icon entypo-chart-line scnd-font-color"></span>Analysis</a>
+                    <a class="header-menu-tab" style='color: #FFFFFF;text-decoration: none;' href="#1"><span class="icon entypo-chart-line scnd-font-color"></span>Analysis</a>
                 </li>
 
                 <li>
-                    <a class="header-menu-tab" href="#3"><i class="fas fa-puzzle-piece"></i> Tutorials</a>
+                    <a class="header-menu-tab" style='color: #FFFFFF;text-decoration: none;' href="#3"><i class="fas fa-puzzle-piece"></i> Tutorials</a>
 
                 </li>
 
                 <li>
-                    <a class="header-menu-tab" href="#5"><span class="icon entypo-cog scnd-font-color"></span>Settings</a>
+                    <a class="header-menu-tab" style='color: #FFFFFF;text-decoration: none;' href="#5"><span class="icon entypo-cog scnd-font-color"></span>Settings</a>
                 </li>
 
             </ul>
             <div class="profile-menu">
-                <p>More <a href="#26"><span class="entypo-down-open scnd-font-color"></span></a></p>
+                <p>More <a style='color: #FFFFFF;text-decoration: none;' href="#26"><span class="entypo-down-open scnd-font-color"></span></a></p>
                 <div class="profile-picture small-profile-picture">
                     <img width="40px">
                 </div>
             </div>
         </header>
-
+        <div class="row">
         <!-- LEFT-CONTAINER -->
+        <div class="col">
         <div class="left-container container">
 
           <!-- MENU BOX (LEFT-CONTAINER) -->
@@ -45,136 +53,156 @@
              <h2 class="titular">MENU</h2>
              <ul class="menu-box-menu">
                  <li>
-                     <a class="menu-box-tab" href="#6"><span  class="icon  scnd-font-color"></span> Target and run list <div class="menu-box-number"></div></a>
+                     <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="#6"><span  class="icon  scnd-font-color"></span> Target and run list <div class="menu-box-number"></div></a>
                  </li>
                  <li>
-                     <a class="menu-box-tab" href="#8"><span class="icon  scnd-font-color"></span>Simulation <div class="menu-box-number"></div></a>
+                     <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="#8"><span class="icon  scnd-font-color"></span>Simulation <div class="menu-box-number"></div></a>
                  </li>
                  <li>
-                     <a class="menu-box-tab" href="#10"><span class="icon  scnd-font-color"></span>Spectrum<div class="menu-box-number"></div></a>
+                     <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="#10"><span class="icon  scnd-font-color"></span>Spectrum<div class="menu-box-number"></div></a>
                  </li>
                  <li>
-                     <a class="menu-box-tab" href="#12"><span class="icon  scnd-font-color"></span>Excluded region</a>
+                     <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="#12"><span class="icon  scnd-font-color"></span>Excluded region</a>
                  </li>
                  <li>
-                     <a class="menu-box-tab" href="#13"><span class="icon  scnd-font-color"></span>Available results<div class="menu-box-number">3</div></a>
+                     <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="#13"><span class="icon  scnd-font-color"></span>Available results<div class="menu-box-number">3</div></a>
                  </li>
              </ul>
          </div>
 
+         <div class="account block">
+             <h2 class="titular">Look for a target</h2>
+
+             <form method="POST" action="" enctype="multipart/form-data">
+               {{ form.hidden_tag() }}
+
+               <div class="input-container">
+                 <div class="form-group">
+                   {% if form.source.errors %}
+                     {{ form.source.label(class="is-invalid") }}
+                     {{ form.source(class="is-invalid")}}
+                     <div class="invalid-feedback">
+                       {% for error in form.source.errors %}
+                          <div class="invalid">
+                            <i class="fa fa-info-circle"></i> {{ error }}
+                          </div>
+                       {% endfor%}
+                     </div>
+                   {% else %}
+                     {{ form.source.label(class="text-label")  }}
+                     {{ form.source(class="select-label")  }}
+                   {% endif%}
+                 </div>
+               </div>
 
 
+               <div>
+               <p class="text-label"> Or select coordinates :</p>
+
+               </div>
+
+               <div class="form-group">
+                 {% if form.rmin.errors %}
+                   {{ form.rmin.label(class="is-invalid") }}
+                   {{ form.rmin(class="is-invalid")}}
+                   <div class="invalid-feedback">
+                     {% for error in form.rmin.errors %}
+                        <div class="invalid">
+                          <i class="fa fa-info-circle"></i> {{ error }}
+                        </div>
+                     {% endfor%}
+                   </div>
+                 {% else %}
+                   {{ form.rmin.label(class="text-label")  }}
+                   {{ form.rmin }}
+                 {% endif%}
+               </div>
+
+               <div class="form-group">
+                 {% if form.rmax.errors %}
+                   {{ form.rmax.label(class="is-invalid") }}
+                   {{ form.rmax(class="is-invalid")}}
+                   <div class="invalid-feedback">
+                     {% for error in form.rmax.errors %}
+                        <div class="invalid">
+                          <i class="fa fa-info-circle"></i> {{ error }}
+                        </div>
+                     {% endfor%}
+                   </div>
+                 {% else %}
+                   {{ form.rmax.label(class="text-label") }}
+                   {{ form.rmax }}
+                 {% endif%}
+               </div>
+               <br>
+               <p class="text-label"> Or choose a run list (.txt or .dat file containing a list of run)</p>
+               <input class="text-label" type=file name=file>
+               <br>
+               <br>
+               <div class="form-group">
+                 {% if form.obs.errors %}
+                   {{ form.obs.label(class="is-invalid") }}
+                   {{ form.obs(class="is-invalid")}}
+                   <div class="invalid-feedback">
+                     {% for error in form.obs.errors %}
+                        <div class="invalid">
+                          <i class="fa fa-info-circle"></i> {{ error }}
+                        </div>
+                     {% endfor%}
+                   </div>
+                 {% else %}
+                   {{ form.obs.label(class="text-label")  }}
+                   {{ form.obs }}
+                 {% endif%}
+               </div>
+
+               <br>
+               <br>
+                 {{ form.submit(class="sign-in button") }}
+
+             </form>
 
 
+         </div>
 
+        </div>
         </div>
 
         <!-- MIDDLE-CONTAINER -->
-        <div class="middle-container container">
-          <div class="account block">
-              <h2 class="titular">Look for a target</h2>
-
-              <form method="POST" action="" enctype="multipart/form-data">
-  							{{ form.hidden_tag() }}
-
-                <div class="input-container">
-    							<div class="form-group">
-    								{% if form.source.errors %}
-    									{{ form.source.label(class="is-invalid") }}
-    									{{ form.source(class="is-invalid")}}
-    									<div class="invalid-feedback">
-    										{% for error in form.source.errors %}
-    										   <div class="invalid">
-    											   <i class="fa fa-info-circle"></i> {{ error }}
-    										   </div>
-    										{% endfor%}
-    									</div>
-    								{% else %}
-    									{{ form.source.label(class="text-label")  }}
-    									{{ form.source(class="select-label")  }}
-    								{% endif%}
-    							</div>
-                </div>
-
-
-                <div>
-                <p class="text-label"> Or select coordinates :</p>
-
-                </div>
-
-                <div class="form-group">
-  								{% if form.rmin.errors %}
-  									{{ form.rmin.label(class="is-invalid") }}
-  									{{ form.rmin(class="is-invalid")}}
-  									<div class="invalid-feedback">
-  										{% for error in form.rmin.errors %}
-  										   <div class="invalid">
-  											   <i class="fa fa-info-circle"></i> {{ error }}
-  										   </div>
-  										{% endfor%}
-  									</div>
-  								{% else %}
-  									{{ form.rmin.label(class="text-label")  }}
-  									{{ form.rmin }}
-  								{% endif%}
-  							</div>
-
-  							<div class="form-group">
-  								{% if form.rmax.errors %}
-  									{{ form.rmax.label(class="is-invalid") }}
-  									{{ form.rmax(class="is-invalid")}}
-  									<div class="invalid-feedback">
-  										{% for error in form.rmax.errors %}
-  										   <div class="invalid">
-  											   <i class="fa fa-info-circle"></i> {{ error }}
-  										   </div>
-  										{% endfor%}
-  									</div>
-  								{% else %}
-  									{{ form.rmax.label(class="text-label") }}
-  									{{ form.rmax }}
-  								{% endif%}
-  							</div>
-
-  							<div class="form-group">
-  								{% if form.obs.errors %}
-  									{{ form.obs.label(class="is-invalid") }}
-  									{{ form.obs(class="is-invalid")}}
-  									<div class="invalid-feedback">
-  										{% for error in form.obs.errors %}
-  										   <div class="invalid">
-  											   <i class="fa fa-info-circle"></i> {{ error }}
-  										   </div>
-  										{% endfor%}
-  									</div>
-  								{% else %}
-  									{{ form.obs.label(class="text-label")  }}
-  									{{ form.obs }}
-  								{% endif%}
-  							</div>
-
-                <br>
-                <br>
-  								{{ form.submit(class="sign-in button") }}
-
-  						</form>
-
-
-          </div>
-
-
-        </div>
-
-        <!-- RIGHT-CONTAINER -->
-        <div class="right-container container">
-
+        <div class="col-6">
+        <div class="rescontainer">
           <div class="chart" id="graphJSON">
             <script type="text/javascript">
               var graphs = {{graphJSON | safe}};
               Plotly.plot('graphJSON', graphs, {});
               </script>
           </div>
-             <!-- end calendar-month block -->
-        </div> <!-- end right-container -->
+
+        </div>
+        </div>
+
+        <div class="col">
+          <div class="menu-box block">
+              <h2 class="titular">RESULTS</h2>
+              <ul class="menu-box-menu">
+                  <li>
+                      <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="#6"><span  class="icon  scnd-font-color"></span> MAP <div class="menu-box-number"></div></a>
+                  </li>
+                  <li>
+                      <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="#8"><span class="icon  scnd-font-color"></span>Spectrum <div class="menu-box-number"></div></a>
+                  </li>
+
+              </ul>
+          </div>
+        </div>
+
+        </div>
+
+
+        <!-- RIGHT-CONTAINER
+        <div class="right-container container">
+
+
+        </div> --><!-- end right-container -->
     </div> <!-- end main-container -->
 </body>
