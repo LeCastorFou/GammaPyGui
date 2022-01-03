@@ -61,4 +61,7 @@ def create_app(config_class = Config):
     from  Main.BackEnd.Users.routes import usersbp
     app.register_blueprint(usersbp)
 
+    from  Main.BackEnd.simulation.routes import simubp
+    app.register_blueprint(simubp)
+
     return app

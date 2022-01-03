@@ -53,7 +53,7 @@
              <h2 class="titular">MENU</h2>
              <ul class="menu-box-menu">
                  <li>
-                     <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="#6"><span  class="icon  scnd-font-color"></span> Target and run list <div class="menu-box-number"></div></a>
+                     <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('main.home')}}"><span  class="icon  scnd-font-color"></span> Target and run list <div class="menu-box-number"></div></a>
                  </li>
                  <li>
                      <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('simubp.simu')}}"><span class="icon  scnd-font-color"></span>Simulation <div class="menu-box-number"></div></a>
@@ -78,83 +78,75 @@
 
                <div class="input-container">
                  <div class="form-group">
-                   {% if form.source.errors %}
-                     {{ form.source.label(class="is-invalid") }}
-                     {{ form.source(class="is-invalid")}}
+                   {% if form.plong.errors %}
+                     {{ form.plong.label(class="is-invalid") }}
+                     {{ form.plong(class="is-invalid")}}
                      <div class="invalid-feedback">
-                       {% for error in form.source.errors %}
+                       {% for error in form.plong.errors %}
                           <div class="invalid">
                             <i class="fa fa-info-circle"></i> {{ error }}
                           </div>
                        {% endfor%}
                      </div>
                    {% else %}
-                     {{ form.source.label(class="text-label")  }}
-                     {{ form.source(class="select-label")  }}
+                     {{ form.plong.label(class="text-label")  }}
+                     {{ form.plong(class="select-label")  }}
                    {% endif%}
                  </div>
                </div>
 
 
-               <div>
-               <p class="text-label"> Or select coordinates :</p>
-
-               </div>
-
                <div class="form-group">
-                 {% if form.rmin.errors %}
-                   {{ form.rmin.label(class="is-invalid") }}
-                   {{ form.rmin(class="is-invalid")}}
+                 {% if form.plat.errors %}
+                   {{ form.plat.label(class="is-invalid") }}
+                   {{ form.plat(class="is-invalid")}}
                    <div class="invalid-feedback">
-                     {% for error in form.rmin.errors %}
+                     {% for error in form.plat.errors %}
                         <div class="invalid">
                           <i class="fa fa-info-circle"></i> {{ error }}
                         </div>
                      {% endfor%}
                    </div>
                  {% else %}
-                   {{ form.rmin.label(class="text-label")  }}
-                   {{ form.rmin }}
+                   {{ form.plat.label(class="text-label")  }}
+                   {{ form.plat }}
                  {% endif%}
                </div>
 
                <div class="form-group">
-                 {% if form.rmax.errors %}
-                   {{ form.rmax.label(class="is-invalid") }}
-                   {{ form.rmax(class="is-invalid")}}
+                 {% if form.slong.errors %}
+                   {{ form.slong.label(class="is-invalid") }}
+                   {{ form.slong(class="is-invalid")}}
                    <div class="invalid-feedback">
-                     {% for error in form.rmax.errors %}
+                     {% for error in form.slong.errors %}
                         <div class="invalid">
                           <i class="fa fa-info-circle"></i> {{ error }}
                         </div>
                      {% endfor%}
                    </div>
                  {% else %}
-                   {{ form.rmax.label(class="text-label") }}
-                   {{ form.rmax }}
+                   {{ form.slong.label(class="text-label") }}
+                   {{ form.slong }}
                  {% endif%}
                </div>
-               <br>
-               <p class="text-label"> Or choose a run list (.txt or .dat file containing a list of run)</p>
-               <input class="text-label" type=file name=file>
-               <br>
-               <br>
+
                <div class="form-group">
-                 {% if form.obs.errors %}
-                   {{ form.obs.label(class="is-invalid") }}
-                   {{ form.obs(class="is-invalid")}}
+                 {% if form.slat.errors %}
+                   {{ form.slat.label(class="is-invalid") }}
+                   {{ form.slat(class="is-invalid")}}
                    <div class="invalid-feedback">
-                     {% for error in form.obs.errors %}
+                     {% for error in form.slat.errors %}
                         <div class="invalid">
                           <i class="fa fa-info-circle"></i> {{ error }}
                         </div>
                      {% endfor%}
                    </div>
                  {% else %}
-                   {{ form.obs.label(class="text-label")  }}
-                   {{ form.obs }}
+                   {{ form.slat.label(class="text-label") }}
+                   {{ form.slat }}
                  {% endif%}
                </div>
+
 
                <br>
                <br>

@@ -106,5 +106,5 @@ def home():
             return render_template('main/index.html',form = form, graphJSON = graph)
         else:
             flash('NO runs available','error')
-            return render_template('main/index.html', form = form, graph ={})
-    return render_template('main/index.html', form = form, graph ={})
+            return render_template('main/index.html', form = form, graphJSON ={})
+    return render_template('main/index.html', form = form, graphJSON ={})
