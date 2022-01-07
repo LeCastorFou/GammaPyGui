@@ -5,7 +5,6 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 from flask_restful import Api, Resource, reqparse
 import pandas as pd
-from flask_simple_geoip import SimpleGeoIP
 from Main.BackEnd.main.forms import  StartAnalysis
 from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection
 import requests
@@ -44,6 +43,40 @@ from gammapy.visualization import plot_theta_squared_table
 
 
 main = Blueprint('main',__name__)
+
+import os
+import pandas as pd
+import numpy as np
+import secrets
+import os
+from PIL import Image
+from wtforms.fields.html5 import DateField
+import datetime
+from datetime import timedelta
+from flask import current_app, url_for
+from flask_mail import Message
+from datetime import datetime
+import pymongo
+from pymongo import MongoClient
+#from sshtunnel import SSHTunnelForwarder
+import pandas as pd
+import ast
+def Get_MongoDB():
+    '''
+        Connect to mongo machine on port 27017 and get LeLardon
+    '''
+    # Connection Parameters
+    client = pymongo.MongoClient("mongodb://hess:CT5io!@51.15.204.85/HESS")
+    db = client['HESS']
+    return db
+
+def load_DB_collection(db_mongo,collection):
+    cursor = db_mongo[collection].find()
+    df =  pd.DataFrame(list(cursor))
+    if len(df)>0:
+        df = df.drop(['_id'], axis=1)
+    return df
+
 
 @main.route("/", methods=['GET', 'POST'])
 @main.route("/home", methods=['GET', 'POST'])
