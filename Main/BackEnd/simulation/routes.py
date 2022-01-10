@@ -1,38 +1,14 @@
-from flask import Blueprint
-from flask import render_template, url_for,flash, redirect, request, abort, send_from_directory, make_response, jsonify
+
+from Main.BackEnd.imports.pythonSTD import *
+from Main.BackEnd.imports.ploting import *
+from Main.BackEnd.imports.flaskSTD import *
+from Main.BackEnd.imports.astropySTD import *
+
 from Main import db, bcrypt, mail
-from flask_login import login_user, current_user, logout_user, login_required
-from flask_mail import Message
-from flask_restful import Api, Resource, reqparse
-import pandas as pd
 from Main.BackEnd.simulation.forms import  LaunchSimu
 from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection
-import requests
-import json
-import time
-import pandas as pd
-import plotly.express as px
-import plotly
-import plotly.figure_factory as ff
-import plotly.graph_objects as go
-import datetime
-from datetime import timedelta
-from werkzeug.utils import secure_filename
-import os
-import math
-import numpy as np
-import sshtunnel
-import sys
-import paramiko
-import re
-import pathlib
 
-import matplotlib
-matplotlib.use('TkAgg')
-import numpy as np
-import astropy.units as u
 import gammapy
-from astropy.coordinates import SkyCoord
 from gammapy.irf import load_cta_irfs
 from gammapy.maps import WcsGeom, MapAxis
 from gammapy.modeling.models import (
@@ -46,8 +22,7 @@ from gammapy.makers import MapDatasetMaker, SafeMaskMaker
 from gammapy.modeling import Fit
 from gammapy.data import Observation
 from gammapy.datasets import MapDataset
-import plotly.graph_objects as go
-import pandas as pd
+
 
 from gammapy.analysis import Analysis, AnalysisConfig
 from gammapy.makers import RingBackgroundMaker

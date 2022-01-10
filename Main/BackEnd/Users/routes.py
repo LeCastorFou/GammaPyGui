@@ -1,21 +1,11 @@
-from flask import Blueprint
-from flask import render_template, url_for, flash, redirect, request, abort
+from Main.BackEnd.imports.pythonSTD import *
+from Main.BackEnd.imports.ploting import *
+from Main.BackEnd.imports.flaskSTD import *
+
 from Main import db, bcrypt, mail
 from Main.BackEnd.Users.forms import RegistrationForm, LoginForm, UpdateAccountForm
 from Main.models import User
-from flask_login import login_user, current_user, logout_user, login_required
-from flask_mail import Message
-import os
-import pandas as pd
-import numpy as np
-#import secrets
-import os
-from PIL import Image
-from wtforms.fields.html5 import DateField
-import datetime
-from datetime import timedelta
-from flask import jsonify
-import json
+
 
 usersbp = Blueprint('usersbp',__name__)
 

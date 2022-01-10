@@ -1,26 +1,18 @@
-from flask import Blueprint
-from flask import render_template, url_for,flash, redirect, request, abort, send_from_directory, make_response, jsonify
+from Main.BackEnd.imports.pythonSTD import *
+from Main.BackEnd.imports.ploting import *
+from Main.BackEnd.imports.flaskSTD import *
+from Main.BackEnd.imports.astropySTD import *
+
 from Main import db, bcrypt, mail
-from flask_login import login_user, current_user, logout_user, login_required
-from flask_mail import Message
-from flask_restful import Api, Resource, reqparse
-import pandas as pd
 from Main.BackEnd.spectrum.forms import  LaunchSpectrum
 from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection
 
 
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
-# Check package versions
 import gammapy
-import numpy as np
-import astropy
+
 import regions
 
-from pathlib import Path
-import astropy.units as u
-from astropy.coordinates import SkyCoord, Angle
+
 from regions import CircleSkyRegion
 from gammapy.maps import MapAxis, RegionGeom, WcsGeom
 from gammapy.modeling import Fit

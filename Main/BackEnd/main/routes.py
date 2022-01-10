@@ -1,39 +1,11 @@
-from flask import Blueprint
-from flask import render_template, url_for,flash, redirect, request, abort, send_from_directory, make_response, jsonify
+from Main.BackEnd.imports.pythonSTD import *
+from Main.BackEnd.imports.ploting import *
+from Main.BackEnd.imports.flaskSTD import *
+from Main.BackEnd.imports.astropySTD import *
+
 from Main import db, bcrypt, mail
-from flask_login import login_user, current_user, logout_user, login_required
-from flask_mail import Message
-from flask_restful import Api, Resource, reqparse
-import pandas as pd
 from Main.BackEnd.main.forms import  StartAnalysis
 from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection
-import requests
-import json
-import time
-import pandas as pd
-import plotly.express as px
-import plotly
-import plotly.figure_factory as ff
-import plotly.graph_objects as go
-import datetime
-from datetime import timedelta
-from werkzeug.utils import secure_filename
-import os
-import math
-import numpy as np
-import sshtunnel
-import sys
-import paramiko
-import re
-
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
-from astropy.coordinates import SkyCoord
-import astropy.units as u
-from astropy.coordinates import ICRS, Galactic, FK4, FK5  # Low-level frames
-from astropy.coordinates import Angle, Latitude, Longitude  # Angles
-from astropy.table import Table
 
 from gammapy.data import DataStore
 from gammapy.maps import MapAxis, WcsGeom, Map
@@ -44,38 +16,6 @@ from gammapy.visualization import plot_theta_squared_table
 
 main = Blueprint('main',__name__)
 
-######## to DELETE BEFORE PROD
-import os
-import pandas as pd
-import numpy as np
-import secrets
-import os
-from PIL import Image
-from wtforms.fields.html5 import DateField
-import datetime
-from datetime import timedelta
-from flask import current_app, url_for
-from flask_mail import Message
-from datetime import datetime
-import pymongo
-from pymongo import MongoClient
-#from sshtunnel import SSHTunnelForwarder
-import pandas as pd
-import ast
-
-def Get_MongoDB():
-    # Connection Parameters
-    client = pymongo.MongoClient("mongodb://hess:CT5io!@51.15.204.85/HESS")
-    db = client['HESS']
-    return db
-
-def load_DB_collection(db_mongo,collection):
-    cursor = db_mongo[collection].find()
-    df =  pd.DataFrame(list(cursor))
-    if len(df)>0:
-        df = df.drop(['_id'], axis=1)
-    return df
-#########################################
 
 @main.route("/", methods=['GET', 'POST'])
 @main.route("/home", methods=['GET', 'POST'])
