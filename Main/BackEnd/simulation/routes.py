@@ -5,7 +5,6 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 from flask_restful import Api, Resource, reqparse
 import pandas as pd
-from flask_simple_geoip import SimpleGeoIP
 from Main.BackEnd.simulation.forms import  LaunchSimu
 from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection
 import requests

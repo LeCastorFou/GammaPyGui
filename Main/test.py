@@ -1,5 +1,4 @@
 import pandas as pd
-from flask_simple_geoip import SimpleGeoIP
 import requests
 import json
 import time

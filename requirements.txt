@@ -16,7 +16,6 @@ firebase==3.0.1
 numpy==1.16.4
 arrow==0.17.0
 Flask_DebugToolbar==0.10.1
-Flask_Simple_GeoIP==0.2.4
 WTForms_SQLAlchemy==0.1
 requests==2.22.0
 urllib3==1.24.2

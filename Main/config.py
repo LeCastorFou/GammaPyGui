@@ -21,5 +21,4 @@ class Config():
     MAIL_USERNAME = ''
     MAIL_PASSWORD = ''
 
-    GEOIPIFY_API_KEY='at_oTLyi8f88anysncTjm6RR5EdBloLt'
     UPLOAD_FOLDER = os.getcwd()

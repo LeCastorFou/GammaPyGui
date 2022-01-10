@@ -1,6 +1,7 @@
 from Main import create_app
 import socket
 from Main.BackEnd.controller import  pwa
+
 app = create_app()
 
 app.register_blueprint(pwa.bp)

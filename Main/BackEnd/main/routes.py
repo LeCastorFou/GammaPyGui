@@ -44,6 +44,7 @@ from gammapy.visualization import plot_theta_squared_table
 
 main = Blueprint('main',__name__)
 
+######## to DELETE BEFORE PROD
 import os
 import pandas as pd
 import numpy as np
@@ -61,10 +62,8 @@ from pymongo import MongoClient
 #from sshtunnel import SSHTunnelForwarder
 import pandas as pd
 import ast
+
 def Get_MongoDB():
-    '''
-        Connect to mongo machine on port 27017 and get LeLardon
-    '''
     # Connection Parameters
     client = pymongo.MongoClient("mongodb://hess:CT5io!@51.15.204.85/HESS")
     db = client['HESS']
@@ -76,7 +75,7 @@ def load_DB_collection(db_mongo,collection):
     if len(df)>0:
         df = df.drop(['_id'], axis=1)
     return df
-
+#########################################
 
 @main.route("/", methods=['GET', 'POST'])
 @main.route("/home", methods=['GET', 'POST'])

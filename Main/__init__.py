@@ -7,7 +7,6 @@ from flask_toastr import Toastr
 import os
 import socket
 from Main.config import Config
-from flask_simple_geoip import SimpleGeoIP
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_restful import Api
 
@@ -27,8 +26,6 @@ login_manager.login_view = 'usersbp.Login'
 # donne la class bootstrap info au message d'erreur necessite l'auth
 login_manager.login_message_category = 'info'
 login_manager.login_message = u"Vous devez être connecté pour accéder à cette page"
-# localisation
-simple_geoip = SimpleGeoIP()
 
 #template_dir = os.path.abspath('Main/static/FrontEnd/templates')
 template_dir = os.path.join( os.path.dirname(os.path.realpath(__file__)) , 'static/FrontEnd/templates')
@@ -37,7 +34,7 @@ def create_app(config_class = Config):
     app = Flask(__name__, template_folder=template_dir)
     app.config.from_object(Config)
 
-    if socket.gethostname() in ['WindProject','CFT-AZURE-LX005'] :
+    if socket.gethostname() in [] :
         print('server')
     else:
         app.debug = False
@@ -51,17 +48,18 @@ def create_app(config_class = Config):
     toastr.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
-    simple_geoip.init_app(app)
     api.init_app(app)
 
     from Main.BackEnd.main.routes import main
     app.register_blueprint(main)
-    api.init_app(app)
 
     from  Main.BackEnd.Users.routes import usersbp
     app.register_blueprint(usersbp)
 
     from  Main.BackEnd.simulation.routes import simubp
     app.register_blueprint(simubp)
+
+    from  Main.BackEnd.spectrum.routes import spectrumbp
+    app.register_blueprint(spectrumbp)
 
     return app
