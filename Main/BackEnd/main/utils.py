@@ -15,6 +15,7 @@ from pymongo import MongoClient
 #from sshtunnel import SSHTunnelForwarder
 import pandas as pd
 import ast
+from gammapy.maps import WcsNDMap
 
 
 #Lardon56!
@@ -35,3 +36,24 @@ def load_DB_collection(db_mongo,collection):
     if len(df)>0:
         df = df.drop(['_id'], axis=1)
     return df
+
+def plot_map_image(eventlist,path,analysisName,source):
+    if eventlist.is_pointed_observation:
+        offset = eventlist.offset
+    else:
+        offset = eventlist
+
+    plot_width = 2 * offset.max()
+
+    if  eventlist.is_pointed_observation:
+        plot_center = eventlist.pointing_radec
+    else:
+        plot_center = eventlist.galactic_median
+
+    opts = {"width": plot_width,"binsz": 0.05,"proj": "TAN","frame": "galactic","skydir": plot_center,}
+
+    m = WcsNDMap.create(**opts)
+    m.fill_by_coord(eventlist.radec)
+    m = m.smooth(width=0.5)
+    os.makedirs(path+'/'+analysisName)
+    m.plot(stretch="sqrt").get_figure().savefig(path+'/'+analysisName+'/'+source+'_eventmap.png')

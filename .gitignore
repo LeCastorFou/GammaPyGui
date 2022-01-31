@@ -1,1 +1,6 @@
 *.pyc
+Main/static/configFile/*.csv
+*.csv
+Main/static/results/*
+*.png
+*.jpg

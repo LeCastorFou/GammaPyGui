@@ -1,0 +1,62 @@
+{% extends "common/layout.html" %}
+{% block content %}
+
+        <div class="row">
+        <!-- LEFT-CONTAINER -->
+        <div class="col">
+        <div class="left-container container">
+
+          <!-- MENU BOX (LEFT-CONTAINER) -->
+
+         <div class="account block">
+             <h2 class="titular">My config</h2>
+
+             <form method="POST" action="" enctype="multipart/form-data">
+               {{ form.hidden_tag() }}
+
+               <div class="input-container">
+
+                 <div class="form-group">
+                   {% if form.hessDataPath.errors %}
+                     {{ form.hessDataPath.label(class="is-invalid") }}
+                     {{ form.hessDataPath(class="is-invalid")}}
+                     <div class="invalid-feedback">
+                       {% for error in form.hessDataPath.errors %}
+                          <div class="invalid">
+                            <i class="fa fa-info-circle"></i> {{ error }}
+                          </div>
+                       {% endfor%}
+                     </div>
+                   {% else %}
+                     {{ form.hessDataPath.label(class="text-label")  }}
+                     {{ form.hessDataPath(class="select-label")  }}
+                   {% endif%}
+                 </div>
+               </div>
+
+                 {{ form.submit(class="sign-in button") }}
+
+             </form>
+
+
+         </div>
+
+        </div>
+        </div>
+
+        <!-- MIDDLE-CONTAINER -->
+        <div class="col-6">
+        <div class="rescontainer">
+
+
+        </div>
+        </div>
+
+        <div class="col">
+          
+        </div>
+
+        </div>
+
+
+{% endblock content %}

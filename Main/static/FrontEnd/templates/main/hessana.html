@@ -17,6 +17,25 @@
 
                <div class="input-container">
                  <div class="form-group">
+                   {% if form.analysisName.errors %}
+                     {{ form.analysisName.label(class="is-invalid") }}
+                     {{ form.analysisName(class="is-invalid")}}
+                     <div class="invalid-feedback">
+                       {% for error in form.analysisName.errors %}
+                          <div class="invalid">
+                            <i class="fa fa-info-circle"></i> {{ error }}
+                          </div>
+                       {% endfor%}
+                     </div>
+                   {% else %}
+                     {{ form.analysisName.label(class="text-label")  }}
+                     {{ form.analysisName(class="select-label")  }}
+                   {% endif%}
+                 </div>
+               </div>
+
+               <div class="input-container">
+                 <div class="form-group">
                    {% if form.source.errors %}
                      {{ form.source.label(class="is-invalid") }}
                      {{ form.source(class="is-invalid")}}
@@ -121,7 +140,7 @@
         </div>
 
         <div class="col">
-        {% include 'common/rightmenu.html' %}
+          {% include 'common/rightmenu.html' %}
         </div>
 
         </div>

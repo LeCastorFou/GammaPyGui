@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed,FileRequired
-from wtforms import StringField, SelectField, PasswordField, SelectMultipleField, FloatField, SubmitField, BooleanField, TextAreaField, DateTimeField, IntegerField
+from wtforms import TextField, StringField, SelectField, PasswordField, SelectMultipleField, FloatField, SubmitField, BooleanField, TextAreaField, DateTimeField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
 from flask_uploads import UploadSet, IMAGES
 from flask_login import current_user
@@ -16,3 +16,15 @@ class StartAnalysis(FlaskForm):
     rmax = IntegerField('Run Max *', validators=[],default=200000)
     obs = SelectField('Observatory : ', choices=[('H.E.S.S.','H.E.S.S.'),('CTA','CTA'),('FERMI','FERMI')] , validators=[DataRequired()])
     submit = SubmitField('Launch analysis')
+
+class StartHessAna(FlaskForm):
+    source =  SelectField('Choose a source', choices=[('','')] , validators=[])
+    analysisName =  StringField('Name of analysis :' , validators=[DataRequired()])
+    rmin = IntegerField('Run min  *', validators=[DataRequired()],default=1)
+    rmax = IntegerField('Run Max *', validators=[],default=200000)
+    obs = SelectField('Observatory : ', choices=[('H.E.S.S.','H.E.S.S.'),('CTA','CTA'),('FERMI','FERMI')] , validators=[DataRequired()])
+    submit = SubmitField('Launch analysis')
+
+class SetUpConfig(FlaskForm):
+    hessDataPath =  StringField('Path to H.E.S.S fits data folder :' , validators=[])
+    submit = SubmitField('Apply config')

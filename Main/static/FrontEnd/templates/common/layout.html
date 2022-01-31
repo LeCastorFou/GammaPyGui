@@ -18,12 +18,12 @@
         <header class="block">
             <ul class="header-menu horizontal-list">
                 <li>
-                    <a class="header-menu-tab" style='color: #FFFFFF;text-decoration: none;' href="#2"><span class="icon fontawesome-user scnd-font-color"></span>Account</a>
+                    <a class="header-menu-tab" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('main.account')}}"><span class="icon fontawesome-user scnd-font-color"></span>Account Config</a>
                     <a class="header-menu-number" style='color: #FFFFFF;text-decoration: none;' href="#4">5</a>
                 </li>
 
                 <li>
-                    <a class="header-menu-tab" style='color: #FFFFFF;text-decoration: none;' href="#1"><span class="icon entypo-chart-line scnd-font-color"></span>Analysis</a>
+                    <a class="header-menu-tab" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('main.home')}}"><span class="icon entypo-chart-line scnd-font-color"></span>Analysis</a>
                 </li>
 
                 <li>
@@ -53,6 +53,6 @@
         {% endwith %}
 
         {% block content %}{% endblock %}
-        
+
     </div> <!-- end main-container -->
 </body>

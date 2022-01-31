@@ -1,0 +1,39 @@
+{% extends "common/layout.html" %}
+{% block content %}
+
+        <div class="row">
+        <!-- LEFT-CONTAINER -->
+        <div class="col">
+        <div class="left-container container">
+
+          <!-- MENU BOX (LEFT-CONTAINER) -->
+
+         <div class="account block">
+             <h2 class="titular">MY RESULTS</h2>
+             {% for res in listres%}
+             <li>
+                 <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href=""><span  class="icon  scnd-font-color"></span> {{res}} <div class="menu-box-number"></div></a>
+             </li>
+             {%endfor%}
+
+
+
+         </div>
+
+        </div>
+        </div>
+
+        <!-- MIDDLE-CONTAINER -->
+        <div class="col-6">
+          <img src="{{url_for('static', filename='results/'+folder+'/'+listres[0])}}" />
+
+        </div>
+
+        <div class="col">
+          {% include 'common/rightmenu.html' %}
+        </div>
+
+        </div>
+
+
+{% endblock content %}

@@ -4,11 +4,11 @@ from Main.BackEnd.imports.flaskSTD import *
 from Main.BackEnd.imports.astropySTD import *
 
 from Main import db, bcrypt, mail
-from Main.BackEnd.main.forms import  StartAnalysis
-from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection
+from Main.BackEnd.main.forms import  StartAnalysis, StartHessAna, SetUpConfig
+from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection, plot_map_image
 
 from gammapy.data import DataStore
-from gammapy.maps import MapAxis, WcsGeom, Map
+from gammapy.maps import MapAxis, WcsGeom, Map,WcsNDMap
 from gammapy.makers import MapDatasetMaker
 from gammapy.makers.utils import make_theta_squared_table
 from gammapy.visualization import plot_theta_squared_table
@@ -80,3 +80,96 @@ def home():
             flash('NO runs available','error')
             return render_template('main/index.html', form = form, graphJSON ={})
     return render_template('main/index.html', form = form, graphJSON ={})
+
+@main.route("/account", methods=['GET', 'POST'])
+def account():
+    form = SetUpConfig()
+
+    configPath = os.getcwd() + "/Main/static/configFile/"
+    confExist = os.path.isfile(configPath+"config.csv")
+    fileConfig = configPath+"config.csv"
+    hessDataPath = ""
+
+    if form.validate_on_submit():
+        hessDataPath_new = form.hessDataPath.data
+        df_config = pd.DataFrame.from_dict({'hessDataPath':[hessDataPath_new]})
+        df_config.to_csv(fileConfig)
+    elif request.method ==  'GET':
+        if not confExist:
+            open(fileConfig, 'a').close()
+        else:
+            try:
+                df_config = pd.read_csv(fileConfig)
+            except:
+                df_config = pd.DataFrame.from_dict({})
+                print("No config file or empty ")
+
+            if len(df_config) == 0:
+                print("NO default config")
+            else:
+                try:
+                    hessDataPath = list(df_config['hessDataPath'])[0]
+                except:
+                    print("No HESS PATH defined")
+
+            form.hessDataPath.data =  hessDataPath
+
+    return render_template('main/accountConfig.html', form = form)
+
+@main.route("/hessana", methods=['GET', 'POST'])
+def hessana():
+    form = StartHessAna()
+
+    configPath = os.getcwd() + "/Main/static/configFile/"
+    resPath = os.getcwd() + "/Main/static/results/"
+    confExist = os.path.isfile(configPath+"config.csv")
+    fileConfig = configPath+"config.csv"
+    hessDataPath = ""
+    pathConf = False
+    try:
+        df_config = pd.read_csv(fileConfig)
+        hessDataPath = list(df_config['hessDataPath'])[0]
+        pathConf = True
+    except:
+        print("No HESS DATA PATH defined")
+
+    table = Table.read(hessDataPath+'/obs-index.fits.gz', format='fits')
+    obsindex = table.to_pandas()
+    obsindex["OBJECT"] =  [ e.decode("utf-8")  for e in obsindex["OBJECT"] ]
+    object  = np.unique(list(obsindex["OBJECT"]))
+    objects = [(e,e) for e in object]
+    form.source.choices = objects
+
+    if form.validate_on_submit():
+        print("IS PATH CONFIG ?")
+        print(pathConf)
+        if pathConf:
+            data_store = DataStore.from_dir(hessDataPath)
+            #data_store.obs_table[:][["OBS_ID", "DATE-OBS", "RA_PNT", "DEC_PNT", "OBJECT"]]
+
+            listrun = list(obsindex[obsindex['OBJECT'] == form.source.data]['OBS_ID'])
+            obs = data_store.obs(listrun[0])
+
+            plot_map_image(obs.events,resPath,form.analysisName.data,form.source.data)
+
+
+
+        return render_template('main/hessana.html',form = form, graphJSON = {})
+
+
+    return render_template('main/hessana.html', form = form, graphJSON ={})
+
+
+@main.route("/results", methods=['GET'])
+def results():
+    resPath = os.getcwd() + "/Main/static/results/"
+    print('LIST DIR')
+    listres = os.listdir(resPath)
+    return render_template('main/results.html',listres=listres)
+
+@main.route("/resultsplots/<string:folder>", methods=['GET'])
+def resultsplots(folder):
+    resPath = os.getcwd() + "/Main/static/results/"+folder+'/'
+    print('LIST DIR')
+    listres = os.listdir(resPath)
+    return render_template('main/resultsplots.html',listres=listres,folder = folder)
