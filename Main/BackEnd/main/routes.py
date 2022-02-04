@@ -84,7 +84,8 @@ def home():
 @main.route("/account", methods=['GET', 'POST'])
 def account():
     form = SetUpConfig()
-
+    if not os.path.exists( os.getcwd() + "/Main/static/configFile/"):
+        os.makedirs( os.getcwd() + "/Main/static/configFile/")
     configPath = os.getcwd() + "/Main/static/configFile/"
     confExist = os.path.isfile(configPath+"config.csv")
     fileConfig = configPath+"config.csv"
@@ -115,7 +116,7 @@ def account():
                     print("No HESS PATH defined")
 
             form.hessDataPath.data =  hessDataPath
-
+    flash('Welcome to your account')
     return render_template('main/accountConfig.html', form = form)
 
 @main.route("/hessana", methods=['GET', 'POST'])
@@ -141,12 +142,43 @@ def hessana():
     objects = [(e,e) for e in object]
     form.source.choices = objects
 
+    isRunList = True
+
     if form.validate_on_submit():
         if pathConf:
+            if 'file' not in request.files:
+                flash('No file part')
+                isRunList = False
+            file = request.files['file']
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename.
+            if file.filename == '':
+                flash('No selected file')
+                isRunList = False
+            if isRunList:
+                filename = secure_filename(file.filename)
+                file.save("/tmp/"+filename)
+                f = open("/tmp/"+file.filename, "r")
+                runlist = []
+                for x in f:
+                    runlist = runlist + [x]
+                if os.path.exists("/tmp/"+filename):
+                    os.remove("/tmp/"+ filename)
+                runlist = [int(i) for i in runlist if i != '\n']
+
+
             data_store = DataStore.from_dir(hessDataPath)
             #data_store.obs_table[:][["OBS_ID", "DATE-OBS", "RA_PNT", "DEC_PNT", "OBJECT"]]
 
             listrun = list(obsindex[obsindex['OBJECT'] == form.source.data]['OBS_ID'])
+
+            if isRunList:
+                print(runlist)
+                listrun = [e  for e in listrun if e in runlist]
+            else:
+                listrun = [e for e in listrun if e >= form.rmin.data]
+                listrun = [e for e in listrun if e <= form.rmax.data]
+
             ra_obj = list(obsindex['RA_OBJ'])[0]
             dec_obj = list(obsindex['DEC_OBJ'])[0]
 
@@ -154,11 +186,10 @@ def hessana():
             res_analysisName_base = form.analysisName.data
             res_analysisName = res_analysisName_base
             i = 0
-            print(os.path.exists(resPath+'/'+res_analysisName))
+
             while  os.path.exists(resPath+'/'+res_analysisName):
                 i = i + 1
                 res_analysisName = res_analysisName_base +'_'+str(i)
-            print(res_analysisName)
 
             plot_map_image(obs.events,resPath,res_analysisName,form.source.data)
             position = SkyCoord(ra=ra_obj, dec=dec_obj, unit="deg", frame="icrs")
@@ -170,8 +201,7 @@ def hessana():
                 position=position,
                 theta_squared_axis=theta2_axis,
             )
-            print("resPath")
-            print(resPath)
+
             plot_theta_squared_table_custom(theta2_table,resPath,res_analysisName,form.source.data)
         return render_template('main/hessana.html',form = form, graphJSON = {})
 

@@ -19,11 +19,12 @@
             <ul class="header-menu horizontal-list">
                 <li>
                     <a class="header-menu-tab" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('main.account')}}"><span class="icon fontawesome-user scnd-font-color"></span>Account Config</a>
-                    <a class="header-menu-number" style='color: #FFFFFF;text-decoration: none;' href="#4">5</a>
+
                 </li>
 
                 <li>
                     <a class="header-menu-tab" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('main.home')}}"><span class="icon entypo-chart-line scnd-font-color"></span>Analysis</a>
+                    <a class="header-menu-number" style='color: #FFFFFF;text-decoration: none;' href="#4">5</a>
                 </li>
 
                 <li>
@@ -47,7 +48,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-
+                   <li>{{ message }}</li>
                 {% endfor %}
             {% endif %}
         {% endwith %}
