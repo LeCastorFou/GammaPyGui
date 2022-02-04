@@ -97,25 +97,7 @@
                <input class="text-label" type=file name=file>
                <br>
                <br>
-               <div class="form-group">
-                 {% if form.obs.errors %}
-                   {{ form.obs.label(class="is-invalid") }}
-                   {{ form.obs(class="is-invalid")}}
-                   <div class="invalid-feedback">
-                     {% for error in form.obs.errors %}
-                        <div class="invalid">
-                          <i class="fa fa-info-circle"></i> {{ error }}
-                        </div>
-                     {% endfor%}
-                   </div>
-                 {% else %}
-                   {{ form.obs.label(class="text-label")  }}
-                   {{ form.obs }}
-                 {% endif%}
-               </div>
 
-               <br>
-               <br>
                  {{ form.submit(class="sign-in button") }}
 
              </form>

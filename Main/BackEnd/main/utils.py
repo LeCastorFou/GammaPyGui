@@ -16,7 +16,8 @@ from pymongo import MongoClient
 import pandas as pd
 import ast
 from gammapy.maps import WcsNDMap
-
+from gammapy.maps.utils import edges_from_lo_hi
+from gammapy.maps import MapAxis
 
 #Lardon56!
 #mongodb+srv://<username>:<password>@lelardon-gpgol.mongodb.net/test?retryWrites=true&w=majority
@@ -55,5 +56,59 @@ def plot_map_image(eventlist,path,analysisName,source):
     m = WcsNDMap.create(**opts)
     m.fill_by_coord(eventlist.radec)
     m = m.smooth(width=0.5)
-    os.makedirs(path+'/'+analysisName)
-    m.plot(stretch="sqrt").get_figure().savefig(path+'/'+analysisName+'/'+source+'_eventmap.png')
+    os.makedirs(path+analysisName)
+    m.plot(stretch="sqrt").get_figure().savefig(path+analysisName+'/'+source+'_eventmap.png')
+
+def plot_theta_squared_table_custom(table,path,analysisName,source):
+    import matplotlib.pyplot as plt
+
+    theta2_edges = edges_from_lo_hi(
+        table["theta2_min"].quantity, table["theta2_max"].quantity
+    )
+    theta2_axis = MapAxis.from_edges(theta2_edges, interp="lin", name="theta_squared")
+
+    ax0 = plt.subplot(2, 1, 1)
+
+    x = theta2_axis.center.value
+    x_edges = theta2_axis.edges.value
+    xerr = (x - x_edges[:-1], x_edges[1:] - x)
+
+    ax0.errorbar(
+        x,
+        table["counts"],
+        xerr=xerr,
+        yerr=np.sqrt(table["counts"]),
+        linestyle="None",
+        label="Counts",
+    )
+
+    ax0.errorbar(
+        x,
+        table["counts_off"],
+        xerr=xerr,
+        yerr=np.sqrt(table["counts_off"]),
+        linestyle="None",
+        label="Counts Off",
+    )
+
+    ax0.errorbar(
+        x,
+        table["excess"],
+        xerr=xerr,
+        yerr=(-table["excess_errn"], table["excess_errp"]),
+        fmt="+",
+        linestyle="None",
+        label="Excess",
+    )
+
+    ax0.set_ylabel("Counts")
+    ax0.set_xticks([])
+    ax0.set_xlabel("")
+    ax0.legend()
+
+    ax1 = plt.subplot(2, 1, 2)
+    ax1.errorbar(x, table["sqrt_ts"], xerr=xerr, linestyle="None")
+    ax1.set_xlabel(f"Theta  [{theta2_axis.unit}]")
+    ax1.set_ylabel("Significance")
+    ax0.get_figure().savefig(path+analysisName+'/'+source+'_eventmap.png')
+    return ax0

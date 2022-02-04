@@ -22,7 +22,6 @@ class StartHessAna(FlaskForm):
     analysisName =  StringField('Name of analysis :' , validators=[DataRequired()])
     rmin = IntegerField('Run min  *', validators=[DataRequired()],default=1)
     rmax = IntegerField('Run Max *', validators=[],default=200000)
-    obs = SelectField('Observatory : ', choices=[('H.E.S.S.','H.E.S.S.'),('CTA','CTA'),('FERMI','FERMI')] , validators=[DataRequired()])
     submit = SubmitField('Launch analysis')
 
 class SetUpConfig(FlaskForm):
