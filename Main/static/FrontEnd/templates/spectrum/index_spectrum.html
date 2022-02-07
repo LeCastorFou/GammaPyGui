@@ -43,9 +43,10 @@
 
         <!-- MIDDLE-CONTAINER -->
         <div class="col-6">
-        <div class="rescontainer">
-          <img loading="lazy" src="{{ url_for('static', filename='plot_results/'+resname) }}" alt="mon results">
 
+        <div class="rescontainer">
+          <h2 class="titular">Spectrum</h2>
+            <img src="{{url_for('static', filename='results/'+folder+'/'+plot)}}" />
         </div>
         </div>
 

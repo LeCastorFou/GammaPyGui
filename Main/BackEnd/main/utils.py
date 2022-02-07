@@ -110,5 +110,5 @@ def plot_theta_squared_table_custom(table,path,analysisName,source):
     ax1.errorbar(x, table["sqrt_ts"], xerr=xerr, linestyle="None")
     ax1.set_xlabel(f"Theta  [{theta2_axis.unit}]")
     ax1.set_ylabel("Significance")
-    ax0.get_figure().savefig(path+analysisName+'/'+source+'_eventmap.png')
+    ax0.get_figure().savefig(path+analysisName+'/'+source+'_theta2.png')
     return ax0

@@ -12,7 +12,7 @@ from gammapy.maps import MapAxis, WcsGeom, Map,WcsNDMap
 from gammapy.makers import MapDatasetMaker
 from gammapy.makers.utils import make_theta_squared_table
 from gammapy.visualization import plot_theta_squared_table
-
+from gammapy.data import EventList
 
 main = Blueprint('main',__name__)
 
@@ -186,12 +186,36 @@ def hessana():
             res_analysisName_base = form.analysisName.data
             res_analysisName = res_analysisName_base
             i = 0
-
             while  os.path.exists(resPath+'/'+res_analysisName):
                 i = i + 1
                 res_analysisName = res_analysisName_base +'_'+str(i)
 
-            plot_map_image(obs.events,resPath,res_analysisName,form.source.data)
+            print("##### LIST RUN ##########")
+            print(len(listrun))
+            print(listrun)
+            ## Check if file exists
+            list_run_all = listrun
+            runs_notexist = []
+            for e in list_run_all:
+                print(e)
+                try:
+                    obs = data_store.obs(e)
+                    print("### RUN : "+str(e)+" = " + str(obs.observation_time_duration)+" DURATION  #####")
+                except Exception:
+                    print("RUN : "+str(e)+" ERROR")
+                    runs_notexist = runs_notexist + [e]
+            listrun = [run for run in list_run_all if run not in runs_notexist]
+            print(listrun)
+            print("##### NEW LIST RUN LENGTH ##########")
+            print(len(listrun))
+            obs = data_store.get_observations(listrun)
+            obs_list_events = [e.events for e in obs]
+            combined_events = EventList.from_stack(obs_list_events)
+
+            ### Creat events map
+            plot_map_image(combined_events,resPath,res_analysisName,form.source.data)
+
+            ### Create Theta2
             position = SkyCoord(ra=ra_obj, dec=dec_obj, unit="deg", frame="icrs")
             theta2_axis = MapAxis.from_bounds(0, 0.2, nbin=20, interp="lin", unit="deg2")
 
@@ -201,8 +225,8 @@ def hessana():
                 position=position,
                 theta_squared_axis=theta2_axis,
             )
-
             plot_theta_squared_table_custom(theta2_table,resPath,res_analysisName,form.source.data)
+
         return render_template('main/hessana.html',form = form, graphJSON = {})
 
     return render_template('main/hessana.html', form = form, graphJSON ={})

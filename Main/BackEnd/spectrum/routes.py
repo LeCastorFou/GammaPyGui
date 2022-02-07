@@ -82,7 +82,7 @@ def spectrum1D():
         on_region.to_pixel(ax.wcs).plot(ax=ax, edgecolor="k")
         plot_spectrum_datasets_off_regions(ax=ax, datasets=datasets)
 
-        return render_template('spectrum/index_spectrum.html', resname=resname , form=form)
+        return render_template('spectrum/index_spectrum.html', resname=resname , form=form, folder = folder)
 
 
-    return render_template('spectrum/index_spectrum.html', resname='def.png' , form=form)
+    return render_template('spectrum/index_spectrum.html', resname='def.png' , form=form, folder = folder)
