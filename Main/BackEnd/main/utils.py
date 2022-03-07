@@ -18,7 +18,8 @@ import ast
 from gammapy.maps import WcsNDMap
 from gammapy.maps.utils import edges_from_lo_hi
 from gammapy.maps import MapAxis
-
+import matplotlib.pyplot as plt
+from scipy.stats import norm
 #Lardon56!
 #mongodb+srv://<username>:<password>@lelardon-gpgol.mongodb.net/test?retryWrites=true&w=majority
 
@@ -112,3 +113,44 @@ def plot_theta_squared_table_custom(table,path,analysisName,source):
     ax1.set_ylabel("Significance")
     ax0.get_figure().savefig(path+analysisName+'/'+source+'_theta2.png')
     return ax0
+
+def plotRingSigni(significance_map,excess_map,mask,path_res,filename):
+    offdata = significance_map.data[mask]
+    offdata = offdata[np.isfinite(offdata)]
+
+    significance_all = significance_map.data[np.isfinite(significance_map.data)]
+    significance_off = offdata
+    plt.figure(figsize=(8,6),facecolor='yellow')
+    plt.hist(
+        significance_all,
+        density=True,
+        alpha=0.5,
+        color="red",
+        label="all bins",
+        bins=21,
+    )
+
+    plt.hist(
+        significance_off,
+        density=True,
+        alpha=0.5,
+        color="blue",
+        label="off bins",
+        bins=21,
+    )
+
+    # Now, fit the off distribution with a Gaussian
+    mu, std = norm.fit(significance_off)
+    x = np.linspace(-8, 8, 50)
+    p = norm.pdf(x, mu, std)
+    plt.plot(x, p, lw=2, color="black")
+    plt.legend()
+    plt.xlabel("Significance")
+    plt.yscale("log")
+    plt.ylim(1e-5, 10)
+    xmin, xmax = np.min([np.min(significance_all),-10]), np.max( [np.max(significance_all),10])
+    plt.xlim(xmin, xmax)
+    plt.text(-8,1,f"Fit results: mu = {mu:.2f}, std = {std:.2f}")
+    plt.savefig(path_res+'/'+filename+'_ringBackground_significance_distribution.png')
+    plt.clf()
+    print(f"Fit results: mu = {mu:.2f}, std = {std:.2f}")

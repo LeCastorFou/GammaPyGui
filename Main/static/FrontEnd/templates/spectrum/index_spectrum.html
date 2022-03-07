@@ -1,6 +1,24 @@
 {% extends "common/layout.html" %}
 {% block content %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">  </script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
+
+        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"rel="stylesheet" type="text/css" />
         <div class="row">
+
+        <script>
+            $( function() {
+              var availableTags = [
+                  {% for dir in listresfiles %}
+                      "{{dir}}",
+                  {% endfor %}
+              ];
+              $( "#tags" ).autocomplete({
+                source: availableTags
+              });
+            } );
+        </script>
         <!-- LEFT-CONTAINER -->
         <div class="col">
         <div class="left-container container">
@@ -14,25 +32,75 @@
 
              <form method="POST" action="" enctype="multipart/form-data">
                {{ form.hidden_tag() }}
+               <p class="text-label"> Select analysis name/folder :</p>
+               <input type="text" id="tags" name="tags">
+
                <div class="input-container">
                  <div class="form-group">
-                   {% if form.picname.errors %}
-                     {{ form.picname.label(class="is-invalid") }}
-                     {{ form.picname(class="is-invalid")}}
+                   {% if form.source.errors %}
+                     {{ form.source.label(class="is-invalid") }}
+                     {{ form.source(class="is-invalid")}}
                      <div class="invalid-feedback">
-                       {% for error in form.picname.errors %}
+                       {% for error in form.source.errors %}
                           <div class="invalid">
                             <i class="fa fa-info-circle"></i> {{ error }}
                           </div>
                        {% endfor%}
                      </div>
                    {% else %}
-                     {{ form.picname.label(class="text-label")  }}
-                     {{ form.picname(class="select-label")  }}
+                     {{ form.source.label(class="text-label")  }}
+                     {{ form.source(class="select-label")  }}
                    {% endif%}
                  </div>
                </div>
-               {{ form.submit(class="sign-in button") }}
+
+
+               <div>
+               <p class="text-label"> Or select coordinates :</p>
+
+               </div>
+
+               <div class="form-group">
+                 {% if form.rmin.errors %}
+                   {{ form.rmin.label(class="is-invalid") }}
+                   {{ form.rmin(class="is-invalid")}}
+                   <div class="invalid-feedback">
+                     {% for error in form.rmin.errors %}
+                        <div class="invalid">
+                          <i class="fa fa-info-circle"></i> {{ error }}
+                        </div>
+                     {% endfor%}
+                   </div>
+                 {% else %}
+                   {{ form.rmin.label(class="text-label")  }}
+                   {{ form.rmin }}
+                 {% endif%}
+               </div>
+
+               <div class="form-group">
+                 {% if form.rmax.errors %}
+                   {{ form.rmax.label(class="is-invalid") }}
+                   {{ form.rmax(class="is-invalid")}}
+                   <div class="invalid-feedback">
+                     {% for error in form.rmax.errors %}
+                        <div class="invalid">
+                          <i class="fa fa-info-circle"></i> {{ error }}
+                        </div>
+                     {% endfor%}
+                   </div>
+                 {% else %}
+                   {{ form.rmax.label(class="text-label") }}
+                   {{ form.rmax }}
+                 {% endif%}
+               </div>
+               <br>
+               <p class="text-label"> Or choose a run list (.txt or .dat file containing a list of run)</p>
+               <input class="text-label" type=file name=file>
+               <br>
+               <br>
+
+                 {{ form.submit(class="sign-in button") }}
+
              </form>
 
 

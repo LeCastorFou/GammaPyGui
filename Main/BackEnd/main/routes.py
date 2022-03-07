@@ -5,19 +5,23 @@ from Main.BackEnd.imports.astropySTD import *
 
 from Main import db, bcrypt, mail
 from Main.BackEnd.main.forms import  StartAnalysis, StartHessAna, SetUpConfig
-from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection, plot_map_image, plot_theta_squared_table_custom
+from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection, plot_map_image, plot_theta_squared_table_custom, plotRingSigni
 
 from gammapy.data import DataStore
 from gammapy.maps import MapAxis, WcsGeom, Map,WcsNDMap
-from gammapy.makers import MapDatasetMaker
+from gammapy.makers import MapDatasetMaker, RingBackgroundMaker
 from gammapy.makers.utils import make_theta_squared_table
 from gammapy.visualization import plot_theta_squared_table
 from gammapy.data import EventList
+from gammapy.datasets import MapDataset
+from gammapy.makers import SafeMaskMaker, FoVBackgroundMaker
+from regions import CircleSkyRegion
+from gammapy.estimators import ExcessMapEstimator
 
 main = Blueprint('main',__name__)
 
 
-@main.route("/", methods=['GET', 'POST'])
+
 @main.route("/home", methods=['GET', 'POST'])
 def home():
     db_mongo = Get_MongoDB()
@@ -119,6 +123,7 @@ def account():
     flash('Welcome to your account')
     return render_template('main/accountConfig.html', form = form)
 
+@main.route("/", methods=['GET', 'POST'])
 @main.route("/hessana", methods=['GET', 'POST'])
 def hessana():
     form = StartHessAna()
@@ -190,9 +195,6 @@ def hessana():
                 i = i + 1
                 res_analysisName = res_analysisName_base +'_'+str(i)
 
-            print("##### LIST RUN ##########")
-            print(len(listrun))
-            print(listrun)
             ## Check if file exists
             list_run_all = listrun
             runs_notexist = []
@@ -205,9 +207,9 @@ def hessana():
                     print("RUN : "+str(e)+" ERROR")
                     runs_notexist = runs_notexist + [e]
             listrun = [run for run in list_run_all if run not in runs_notexist]
-            print(listrun)
-            print("##### NEW LIST RUN LENGTH ##########")
-            print(len(listrun))
+            print(pd.DataFrame(listrun))
+            print(resPath+'run_list_'+res_analysisName+'.csv')
+
             obs = data_store.get_observations(listrun)
             obs_list_events = [e.events for e in obs]
             combined_events = EventList.from_stack(obs_list_events)
@@ -226,6 +228,103 @@ def hessana():
                 theta_squared_axis=theta2_axis,
             )
             plot_theta_squared_table_custom(theta2_table,resPath,res_analysisName,form.source.data)
+            pd.DataFrame(listrun).to_csv(resPath+res_analysisName+'/run_list_'+res_analysisName+'.csv')
+
+            # Compute ring background significance
+            print("### Computing ring background #####")
+            ra_src = ra_obj
+            dec_src = dec_obj
+            print("### POSITION #####")
+            print(ra_src)
+            print(dec_src)
+            observations = data_store.get_observations(listrun)
+
+            energy_axis = MapAxis.from_energy_bounds(1.0, 10.0, 4, unit="TeV")
+
+            geom = WcsGeom.create(
+                skydir=(ra_src, dec_src),
+                binsz=0.02,
+                width=(2, 2),
+                frame="icrs",
+                proj="CAR",
+                axes=[energy_axis],
+            )
+
+            # Reduced IRFs are defined in true energy (i.e. not measured energy).
+            energy_axis_true = MapAxis.from_energy_bounds(0.5, 20, 10, unit="TeV", name="energy_true")
+
+            stacked = MapDataset.create(geom=geom, energy_axis_true=energy_axis_true, name="crab-stacked")
+            offset_max = 2.5 * u.deg
+            maker = MapDatasetMaker()
+            maker_safe_mask = SafeMaskMaker(methods=["offset-max", "aeff-max"], offset_max=offset_max)
+            circle = CircleSkyRegion(center=SkyCoord(str(ra_src)+" deg", str(dec_src)+" deg"), radius=0.2 * u.deg)
+            exclusion_mask = ~geom.region_mask(regions=[circle])
+            maker_fov = FoVBackgroundMaker(method="fit", exclusion_mask=exclusion_mask)
+
+            print("### Stack observations ... ")
+            for obs in observations:
+                try:
+                    # First a cutout of the target map is produced
+                    cutout = stacked.cutout(obs.pointing_radec, width=2 * offset_max, name=f"obs-{obs.obs_id}")
+                    # A MapDataset is filled in this cutout geometry
+                    dataset = maker.run(cutout, obs)
+                    # The data quality cut is applied
+                    dataset = maker_safe_mask.run(dataset, obs)
+                    # fit background model
+                    dataset = maker_fov.run(dataset)
+                    print(f"Background norm obs {obs.obs_id}: {dataset.background_model.spectral_model.norm.value:.2f}")
+                    # The resulting dataset cutout is stacked onto the final one
+                    stacked.stack(dataset)
+                except Exception:
+                    print('ERROR with '+ str(obs))
+                    print(str(obs))
+
+
+            stacked.counts.sum_over_axes().smooth(0.05 * u.deg).plot(stretch="sqrt", add_cbar=True);
+
+            # Define map geometry for binned simulation
+            energy_reco = MapAxis.from_edges(np.logspace(-1.0, 1.0, 10), unit="TeV", name="energy", interp="log")
+            geom = WcsGeom.create(skydir=(ra_src, dec_src),binsz=0.02,width=(2, 2),frame="icrs",axes=[energy_reco])
+
+            # It is usually useful to have a separate binning for the true energy axis
+            energy_true = MapAxis.from_edges(np.logspace(-1.5, 1.5, 30), unit="TeV", name="energy_true", interp="log")
+            energy = MapAxis.from_edges(np.logspace(-1.5, 1.5, 30), unit="TeV", name="energy", interp="log")
+
+            #geom = datasets[0].geoms['geom']
+            energy_axis = energy
+            geom_image = geom.to_image().to_cube([energy_axis.squash()])
+
+            # Make the exclusion mask
+            pointing = SkyCoord(ra_src, dec_src, unit="deg", frame="icrs")
+            regions = CircleSkyRegion(center=SkyCoord(ra_src, dec_src, unit="deg"), radius=0.5 * u.deg)
+            exclusion_mask = ~geom_image.region_mask([regions])
+            exclusion_mask.geom
+
+            print("### Ring background ... #####")
+            ring_maker = RingBackgroundMaker(r_in="0.5 deg", width="0.3 deg")
+
+            energy_axis_true = energy
+            dataset_on_off = ring_maker.run(stacked.to_image())
+            stacked.to_image().info_dict()
+
+            estimator = ExcessMapEstimator(0.04 * u.deg, selection_optional=[])
+            lima_maps = estimator.run(dataset_on_off)
+
+            significance_map = lima_maps["sqrt_ts"]
+            excess_map = lima_maps["npred_excess"]
+            print("### PLOTING ... #####")
+            print("saving in " + resPath+res_analysisName)
+            plotRingSigni(significance_map,excess_map,np.array([exclusion_mask.data[0]]),resPath+res_analysisName,res_analysisName)
+
+            plt.figure(figsize=(10, 10))
+            ax1 = plt.subplot(221, projection=significance_map.geom.wcs)
+            ax2 = plt.subplot(222, projection=excess_map.geom.wcs)
+
+            ax1.set_title("Significance map")
+            significance_map.plot(ax=ax1, add_cbar=True)
+
+            ax2.set_title("Excess map")
+            excess_map.plot(ax=ax2, add_cbar=True)
 
         return render_template('main/hessana.html',form = form, graphJSON = {})
 

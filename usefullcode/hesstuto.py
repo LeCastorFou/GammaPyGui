@@ -43,8 +43,7 @@ theta2_table = make_theta_squared_table(
     position=position,
     theta_squared_axis=theta2_axis,
 )
-No HDU found matching: OBS_ID = 23523, HDU_TYPE = rad_max, HDU_CLASS = None
-No HDU found matching: OBS_ID = 23526, HDU_TYPE = rad_max, HDU_CLASS = None
+
 plt.figure(figsize=(10, 5))
 plot_theta_squared_table(theta2_table)
 
