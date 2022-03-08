@@ -18,6 +18,8 @@ import ast
 from gammapy.maps import WcsNDMap
 from gammapy.maps.utils import edges_from_lo_hi
 from gammapy.maps import MapAxis
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 #Lardon56!
