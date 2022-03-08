@@ -20,7 +20,7 @@ from gammapy.estimators import ExcessMapEstimator
 
 main = Blueprint('main',__name__)
 
-
+webSumAddress = "http://127.0.0.1:5050/"
 
 @main.route("/home", methods=['GET', 'POST'])
 def home():
@@ -207,6 +207,8 @@ def hessana():
                     print("RUN : "+str(e)+" ERROR")
                     runs_notexist = runs_notexist + [e]
             listrun = [run for run in list_run_all if run not in runs_notexist]
+
+
             print(pd.DataFrame(listrun))
             print(resPath+'run_list_'+res_analysisName+'.csv')
 
@@ -230,6 +232,29 @@ def hessana():
             plot_theta_squared_table_custom(theta2_table,resPath,res_analysisName,form.source.data)
             pd.DataFrame(listrun).to_csv(resPath+res_analysisName+'/run_list_'+res_analysisName+'.csv')
 
+            # getting runlist summary from web summary
+            response = requests.post(webSumAddress+"uploadrunlistSumAPI", data=json.dumps({"runlist": listrun}))
+
+            res= response.json()
+            df_final = pd.DataFrame({
+            'Ntel':res['plotNTel']['Ntel'],
+            'Value':res['plotNTel']['valTel'],
+            'Duration':res['plotDuration']['runDuration'],
+            'Distance':res['plotOffAxis']['offAxis']
+            })
+            fig1 = px.histogram(df_final, x="Ntel", color ='Value')
+            fig1.update_traces(hovertemplate=None)
+            fig1.update_layout(hovermode='x unified')
+            fig1.write_image(resPath+res_analysisName+"/plotNTel.png")
+            fig2 = px.histogram(df_final, x="Duration")
+            fig2.update_traces(hovertemplate=None)
+            fig2.update_layout(hovermode='x unified')
+            fig2.write_image(resPath+res_analysisName+"/plotRunsDuration.png")
+            fig3 = px.histogram(df_final, x="Distance")
+            fig3.update_traces(hovertemplate=None)
+            fig3.update_layout(hovermode='x unified')
+            fig3.write_image(resPath+res_analysisName+"/plotOffAxis.png")
+            ###################################
             # Compute ring background significance
             print("### Computing ring background #####")
             ra_src = ra_obj
