@@ -12,7 +12,7 @@ dependencies:
   - asn1crypto=1.4.0
   - astropy=4.1
   - async-timeout=3.0.1
-  - async_generator=1.10 
+  - async_generator=1.10
   - attrs=20.3.0
   - backcall=0.2.0
   - backports=1.0
@@ -238,4 +238,3 @@ dependencies:
     - wrapt==1.13.3
     - wtforms==2.2.1
     - wtforms-sqlalchemy==0.1
-prefix: /opt/anaconda3/envs/gammapy-0.18.2
