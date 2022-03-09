@@ -235,75 +235,77 @@ def hessana():
             pd.DataFrame(listrun).to_csv(resPath+res_analysisName+'/run_list_'+res_analysisName+'.csv')
 
             # getting runlist summary from web summary
-            response = requests.post(webSumAddress+"uploadrunlistSumAPI", data=json.dumps({"runlist": listrun}))
+            try:
+                response = requests.post(webSumAddress+"uploadrunlistSumAPI", data=json.dumps({"runlist": listrun}))
 
-            res= response.json()
-            df_final = pd.DataFrame({
-            'Ntel':res['plotNTel']['Ntel'],
-            'Value':res['plotNTel']['valTel'],
-            'Duration':res['plotDuration']['runDuration'],
-            'Distance':res['plotOffAxis']['offAxis']
-            })
-
-
-            fig1 = px.histogram(df_final, x="Ntel", color ='Value')
-            fig1.update_traces(hovertemplate=None)
-            fig1.update_layout(hovermode='x unified')
-            fig1.write_image(resPath+res_analysisName+"/plotNTel.png")
-            fig2 = px.histogram(df_final, x="Duration")
-            fig2.update_traces(hovertemplate=None)
-            fig2.update_layout(hovermode='x unified')
-            fig2.write_image(resPath+res_analysisName+"/plotRunsDuration.png")
-            fig3 = px.histogram(df_final, x="Distance")
-            fig3.update_traces(hovertemplate=None)
-            fig3.update_layout(hovermode='x unified')
-            fig3.write_image(resPath+res_analysisName+"/plotOffAxis.png")
-
-            df_atm = pd.DataFrame({
-            'TransparencyCoefficient_CT1':res['transparency']['TransparencyCoefficient_CT1'],
-            'TransparencyCoefficient_CT2':res['transparency']['TransparencyCoefficient_CT2'],
-            'TransparencyCoefficient_CT3':res['transparency']['TransparencyCoefficient_CT3'],
-            'TransparencyCoefficient_CT4':res['transparency']['TransparencyCoefficient_CT4'],
-            'TransparencyCoefficient_CT5':res['transparency']['TransparencyCoefficient_CT5'],
-            'TimeOfStart':res['transparency']['TimeOfStart'],
-            'Run':res['transparency']['Run']
-            })
-            fig = go.Figure()
-            for e in ['TransparencyCoefficient_CT1','TransparencyCoefficient_CT2','TransparencyCoefficient_CT3','TransparencyCoefficient_CT4','TransparencyCoefficient_CT5']:
-                fig.add_trace(go.Scatter( x=df_atm.TimeOfStart,y=df_atm[e],name=e))
-            fig.update_traces(mode="markers", hovertemplate=None)
-            fig.update_layout(hovermode='x unified')
-            graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-            fig = go.Figure()
-            for e in ['TransparencyCoefficient_CT1','TransparencyCoefficient_CT2','TransparencyCoefficient_CT3','TransparencyCoefficient_CT4','TransparencyCoefficient_CT5']:
-                fig.add_trace(go.Scatter( x=df_atm.Run,y=df_atm[e],name=e))
-            fig.update_traces(mode="markers", hovertemplate=None)
-            fig.update_layout(hovermode='x unified')
-            fig.write_image(resPath+res_analysisName+"/transparencyCoeff.png")
-
-            df_bp = pd.DataFrame({
-            'Num_Broken':res['bp']['Num_Broken'],
-            'Telescope':res['bp']['Telescope'],
-            'TimeOfStart':res['bp']['TimeOfStart']
-            })
-            PlotCreator().stdScatterPlotTelCol(data=df_bp, xcol='TimeOfStart', ycol='Num_Broken', colorcol='Telescope', hoverdata='Num_Broken',name =resPath+res_analysisName+"/nBrokenPix.png")
+                res= response.json()
+                df_final = pd.DataFrame({
+                'Ntel':res['plotNTel']['Ntel'],
+                'Value':res['plotNTel']['valTel'],
+                'Duration':res['plotDuration']['runDuration'],
+                'Distance':res['plotOffAxis']['offAxis']
+                })
 
 
-            df_dead = pd.DataFrame({
-            'Deadtime_mean':res['deadtime']['Deadtime_mean'],
-            'Telescope':res['deadtime']['Telescope'],
-            'TimeOfStart':res['deadtime']['TimeOfStart']
-            })
-            PlotCreator().stdScatterPlotTelCol(data=df_dead, xcol='TimeOfStart', ycol='Deadtime_mean', colorcol='Telescope', hoverdata='Deadtime_mean',name =resPath+res_analysisName+"/Deadtime_mean.png")
+                fig1 = px.histogram(df_final, x="Ntel", color ='Value')
+                fig1.update_traces(hovertemplate=None)
+                fig1.update_layout(hovermode='x unified')
+                fig1.write_image(resPath+res_analysisName+"/plotNTel.png")
+                fig2 = px.histogram(df_final, x="Duration")
+                fig2.update_traces(hovertemplate=None)
+                fig2.update_layout(hovermode='x unified')
+                fig2.write_image(resPath+res_analysisName+"/plotRunsDuration.png")
+                fig3 = px.histogram(df_final, x="Distance")
+                fig3.update_traces(hovertemplate=None)
+                fig3.update_layout(hovermode='x unified')
+                fig3.write_image(resPath+res_analysisName+"/plotOffAxis.png")
+
+                df_atm = pd.DataFrame({
+                'TransparencyCoefficient_CT1':res['transparency']['TransparencyCoefficient_CT1'],
+                'TransparencyCoefficient_CT2':res['transparency']['TransparencyCoefficient_CT2'],
+                'TransparencyCoefficient_CT3':res['transparency']['TransparencyCoefficient_CT3'],
+                'TransparencyCoefficient_CT4':res['transparency']['TransparencyCoefficient_CT4'],
+                'TransparencyCoefficient_CT5':res['transparency']['TransparencyCoefficient_CT5'],
+                'TimeOfStart':res['transparency']['TimeOfStart'],
+                'Run':res['transparency']['Run']
+                })
+                fig = go.Figure()
+                for e in ['TransparencyCoefficient_CT1','TransparencyCoefficient_CT2','TransparencyCoefficient_CT3','TransparencyCoefficient_CT4','TransparencyCoefficient_CT5']:
+                    fig.add_trace(go.Scatter( x=df_atm.TimeOfStart,y=df_atm[e],name=e))
+                fig.update_traces(mode="markers", hovertemplate=None)
+                fig.update_layout(hovermode='x unified')
+                graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+                fig = go.Figure()
+                for e in ['TransparencyCoefficient_CT1','TransparencyCoefficient_CT2','TransparencyCoefficient_CT3','TransparencyCoefficient_CT4','TransparencyCoefficient_CT5']:
+                    fig.add_trace(go.Scatter( x=df_atm.Run,y=df_atm[e],name=e))
+                fig.update_traces(mode="markers", hovertemplate=None)
+                fig.update_layout(hovermode='x unified')
+                fig.write_image(resPath+res_analysisName+"/transparencyCoeff.png")
+
+                df_bp = pd.DataFrame({
+                'Num_Broken':res['bp']['Num_Broken'],
+                'Telescope':res['bp']['Telescope'],
+                'TimeOfStart':res['bp']['TimeOfStart']
+                })
+                PlotCreator().stdScatterPlotTelCol(data=df_bp, xcol='TimeOfStart', ycol='Num_Broken', colorcol='Telescope', hoverdata='Num_Broken',name =resPath+res_analysisName+"/nBrokenPix.png")
 
 
-            df_trigger = pd.DataFrame({
-            'Rate_mean':res['trigger']['Rate_mean'],
-            'Telescope':res['trigger']['Telescope'],
-            'TimeOfStart':res['trigger']['TimeOfStart']
-            })
-            PlotCreator().stdScatterPlotTelCol(data=df_trigger, xcol='TimeOfStart', ycol='Rate_mean', colorcol='Telescope', hoverdata='Rate_mean',name =resPath+res_analysisName+"/Rate_mean.png")
+                df_dead = pd.DataFrame({
+                'Deadtime_mean':res['deadtime']['Deadtime_mean'],
+                'Telescope':res['deadtime']['Telescope'],
+                'TimeOfStart':res['deadtime']['TimeOfStart']
+                })
+                PlotCreator().stdScatterPlotTelCol(data=df_dead, xcol='TimeOfStart', ycol='Deadtime_mean', colorcol='Telescope', hoverdata='Deadtime_mean',name =resPath+res_analysisName+"/Deadtime_mean.png")
 
+
+                df_trigger = pd.DataFrame({
+                'Rate_mean':res['trigger']['Rate_mean'],
+                'Telescope':res['trigger']['Telescope'],
+                'TimeOfStart':res['trigger']['TimeOfStart']
+                })
+                PlotCreator().stdScatterPlotTelCol(data=df_trigger, xcol='TimeOfStart', ycol='Rate_mean', colorcol='Telescope', hoverdata='Rate_mean',name =resPath+res_analysisName+"/Rate_mean.png")
+            except Exception:
+                print("NO CONNECTION TO WEB SUMMARY !!!!")
 
 
             ###################################
@@ -402,7 +404,7 @@ def hessana():
 
             ax2.set_title("Excess map")
             excess_map.plot(ax=ax2, add_cbar=True)
-            
+
         return render_template('main/hessana.html',form = form, graphJSON = {})
 
     return render_template('main/hessana.html', form = form, graphJSON ={})
