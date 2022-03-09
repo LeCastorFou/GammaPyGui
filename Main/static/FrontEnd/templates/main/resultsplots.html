@@ -27,7 +27,7 @@
         <div class="col-6">
           <h2 class="titular">My PNG results</h2>
           {% for plot in listres%}
-          <img src="{{url_for('static', filename='results/'+folder+'/'+'plot')}}" />
+          <img src="{{url_for('static', filename='results/'+folder+'/'+plot)}}" />
           {%endfor%}
         </div>
 
