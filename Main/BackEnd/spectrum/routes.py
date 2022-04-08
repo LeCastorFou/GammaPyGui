@@ -6,7 +6,7 @@ from Main.BackEnd.imports.astropySTD import *
 from Main import db, bcrypt, mail
 from Main.BackEnd.spectrum.forms import  LaunchSpectrum
 from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection
-
+from Main.BackEnd.spectrum.utils import tableToPandas
 
 import gammapy
 
@@ -24,6 +24,9 @@ from gammapy.datasets import (
     FluxPointsDataset,
 )
 from gammapy.modeling.models import (
+    PowerLawSpectralModel,
+    LogParabolaSpectralModel,
+    BrokenPowerLawSpectralModel,
     ExpCutoffPowerLawSpectralModel,
     create_crab_spectral_model,
     SkyModel,
@@ -41,6 +44,7 @@ spectrumbp = Blueprint('spectrumbp',__name__)
 
 @spectrumbp.route("/spectrum1D", methods=['GET', 'POST'])
 def spectrum1D():
+    #try:
     form = LaunchSpectrum()
     configPath = os.getcwd() + "/Main/static/configFile/"
     resPath = os.getcwd() + "/Main/static/results/"
@@ -98,7 +102,8 @@ def spectrum1D():
                 runlist = [int(i) for i in runlist if i != '\n']
 
             datastore = DataStore.from_dir(hessDataPath)
-            listrun = list(obsindex[obsindex['OBJECT'] == form.source.data]['OBS_ID'])
+            obsindex = obsindex[obsindex['OBJECT']== form.source.data]
+            listrun = list(obsindex['OBS_ID'])
 
             if isRunList:
                 listrun = [e  for e in listrun if e in runlist]
@@ -110,8 +115,8 @@ def spectrum1D():
             dec_obj = list(obsindex['DEC_OBJ'])[0]
 
             obs_ids = listrun
-            obs_ids = [23134,23155,23156,23304,23309,23310,23523]
-            print(obs_ids)
+            #obs_ids = [23134,23155,23156,23304,23309,23310,23523]
+            #print(obs_ids)
             print("GETTING RUNS INFOS")
             observations = datastore.get_observations(obs_ids)
             target_position = SkyCoord(ra=ra_obj, dec=dec_obj, unit="deg", frame="icrs")
@@ -183,7 +188,7 @@ def spectrum1D():
             print("PLOTTING FITS")
             ax_spectrum, ax_residuals = datasets[0].plot_fit()
             ax_spectrum.set_ylim(0.1, 40)
-            ax_spectrum.get_figure().savefig(resPath+analysisName+'/spectum.jpg')
+            ax_spectrum.get_figure().savefig(resPath+analysisName+'/spectrum.jpg')
 
             e_min, e_max = 0.7, 30
             energy_edges = np.geomspace(e_min, e_max, 11) * u.TeV
@@ -197,9 +202,47 @@ def spectrum1D():
             plt.figure(figsize=(8, 5))
             ax = flux_points.plot(sed_type="e2dnde", color="darkorange")
             flux_points.plot_ts_profiles(ax=ax, sed_type="e2dnde");
-            ax.get_figure().savefig(resPath+analysisName+'/spectum2.jpg')
+            ax.get_figure().savefig(resPath+analysisName+'/spectrum2.jpg')
+
+            #### FITTING WITh flux point ##############
+            dataset_gammacat = FluxPointsDataset(data=flux_points, name="gammacat")
+            flux_points_df = tableToPandas(flux_points.to_table(sed_type="e2dnde", formatted=True))
+            dataset_gammacat.data.to_table(sed_type="dnde", formatted=True)
+
+            if form.model.data == 'PowerLawSpectralModel':
+                pwl = PowerLawSpectralModel(index=2, amplitude="1e-12 cm-2 s-1 TeV-1", reference="1 TeV")
+            if form.model.data == 'LogParabolaSpectralModel':
+                pwl = LogParabolaSpectralModel(amplitude="1e-12 cm-2 s-1 TeV-1", reference="1 TeV",alpha=2.3,beta=0.2)
+            if form.model.data == 'ExpCutoffPowerLawSpectralModel':
+                pwl = ExpCutoffPowerLawSpectralModel(index=2, amplitude="1e-12 cm-2 s-1 TeV-1", reference="1 TeV",lambda_="0.1 TeV-1",alpha=2.3)
+            if form.model.data == 'BrokenPowerLawSpectralModel':
+                pwl = BrokenPowerLawSpectralModel(index1=2, index2=3,  amplitude="1e-12 cm-2 s-1 TeV-1", ebreak=3)
+
+            model = SkyModel(spectral_model=pwl, name="crab")
+            print(model)
+            datasets = Datasets([dataset_gammacat])
+            datasets.models = model
+            fitter = Fit()
+            result_pwl = fitter.run(datasets=datasets)
+            ax = plt.subplot()
+            kwargs = {"ax": ax, "sed_type": "e2dnde"}
+
+            for d in datasets:
+                d.data.plot(label=d.name, **kwargs)
+
+            energy_bounds = [1e-1, 1e2] * u.TeV
+            pwl.plot(energy_bounds=energy_bounds, color="k", **kwargs)
+            pwl.plot_error(energy_bounds=energy_bounds, **kwargs)
+            ax.set_ylim(np.min(flux_points_df['e2dnde'])/5, np.max(flux_points_df['e2dnde'])*5)
+            ax.set_xlim(energy_bounds)
+            ax.legend()
+            ax.get_figure().savefig(resPath+analysisName+'/spectrumfit.jpg')
+
+
 
             return render_template('spectrum/index_spectrum.html', resname='' , form=form, folder = folder,plot=plot,listresfiles=listresfiles)
 
-
     return render_template('spectrum/index_spectrum.html', resname='def.png' , form=form, folder = folder,plot=plot,listresfiles=listresfiles)
+    #except Exception as inst:
+    #    inst = str(inst)
+    #    return render_template('main/error.html',  inst =inst)

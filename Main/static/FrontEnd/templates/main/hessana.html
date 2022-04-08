@@ -9,101 +9,7 @@
           <!-- MENU BOX (LEFT-CONTAINER) -->
          {% include 'common/leftmenu.html' %}
 
-         <div class="account block">
-             <h2 class="titular">Look for a target</h2>
 
-             <form method="POST" action="" enctype="multipart/form-data">
-               {{ form.hidden_tag() }}
-
-               <div class="input-container">
-                 <div class="form-group">
-                   {% if form.analysisName.errors %}
-                     {{ form.analysisName.label(class="is-invalid") }}
-                     {{ form.analysisName(class="is-invalid")}}
-                     <div class="invalid-feedback">
-                       {% for error in form.analysisName.errors %}
-                          <div class="invalid">
-                            <i class="fa fa-info-circle"></i> {{ error }}
-                          </div>
-                       {% endfor%}
-                     </div>
-                   {% else %}
-                     {{ form.analysisName.label(class="text-label")  }}
-                     {{ form.analysisName(class="select-label")  }}
-                   {% endif%}
-                 </div>
-               </div>
-
-               <div class="input-container">
-                 <div class="form-group">
-                   {% if form.source.errors %}
-                     {{ form.source.label(class="is-invalid") }}
-                     {{ form.source(class="is-invalid")}}
-                     <div class="invalid-feedback">
-                       {% for error in form.source.errors %}
-                          <div class="invalid">
-                            <i class="fa fa-info-circle"></i> {{ error }}
-                          </div>
-                       {% endfor%}
-                     </div>
-                   {% else %}
-                     {{ form.source.label(class="text-label")  }}
-                     {{ form.source(class="select-label")  }}
-                   {% endif%}
-                 </div>
-               </div>
-
-
-               <div>
-               <p class="text-label"> Or select coordinates :</p>
-
-               </div>
-
-               <div class="form-group">
-                 {% if form.rmin.errors %}
-                   {{ form.rmin.label(class="is-invalid") }}
-                   {{ form.rmin(class="is-invalid")}}
-                   <div class="invalid-feedback">
-                     {% for error in form.rmin.errors %}
-                        <div class="invalid">
-                          <i class="fa fa-info-circle"></i> {{ error }}
-                        </div>
-                     {% endfor%}
-                   </div>
-                 {% else %}
-                   {{ form.rmin.label(class="text-label")  }}
-                   {{ form.rmin }}
-                 {% endif%}
-               </div>
-
-               <div class="form-group">
-                 {% if form.rmax.errors %}
-                   {{ form.rmax.label(class="is-invalid") }}
-                   {{ form.rmax(class="is-invalid")}}
-                   <div class="invalid-feedback">
-                     {% for error in form.rmax.errors %}
-                        <div class="invalid">
-                          <i class="fa fa-info-circle"></i> {{ error }}
-                        </div>
-                     {% endfor%}
-                   </div>
-                 {% else %}
-                   {{ form.rmax.label(class="text-label") }}
-                   {{ form.rmax }}
-                 {% endif%}
-               </div>
-               <br>
-               <p class="text-label"> Or choose a run list (.txt or .dat file containing a list of run)</p>
-               <input class="text-label" type=file name=file>
-               <br>
-               <br>
-
-                 {{ form.submit(class="sign-in button") }}
-
-             </form>
-
-
-         </div>
 
         </div>
         </div>
@@ -111,12 +17,100 @@
         <!-- MIDDLE-CONTAINER -->
         <div class="col-6">
         <div class="rescontainer">
-          <h2 class="titular">H.E.S.S. Analysis </h2>
-          <div class="chart" id="graphJSON">
-            <script type="text/javascript">
-              var graphs = {{graphJSON | safe}};
-              Plotly.plot('graphJSON', graphs, {});
-              </script>
+          <div class="account block">
+              <h2 class="titular">Look for a target</h2>
+
+              <form method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.analysisName.errors %}
+                      {{ form.analysisName.label(class="is-invalid") }}
+                      {{ form.analysisName(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.analysisName.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.analysisName.label(class="text-label")  }}
+                      {{ form.analysisName(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.source.errors %}
+                      {{ form.source.label(class="is-invalid") }}
+                      {{ form.source(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.source.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.source.label(class="text-label")  }}
+                      {{ form.source(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+
+                <div>
+                <p class="text-label"> Or select coordinates :</p>
+
+                </div>
+
+                <div class="form-group">
+                  {% if form.rmin.errors %}
+                    {{ form.rmin.label(class="is-invalid") }}
+                    {{ form.rmin(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.rmin.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.rmin.label(class="text-label")  }}
+                    {{ form.rmin }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.rmax.errors %}
+                    {{ form.rmax.label(class="is-invalid") }}
+                    {{ form.rmax(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.rmax.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.rmax.label(class="text-label") }}
+                    {{ form.rmax }}
+                  {% endif%}
+                </div>
+                <br>
+                <p class="text-label"> Or choose a run list (.txt or .dat file containing a list of run)</p>
+                <input class="text-label" type=file name=file>
+                <br>
+                <br>
+
+                  {{ form.submit(class="sign-in button") }}
+
+              </form>
+
+
           </div>
 
         </div>

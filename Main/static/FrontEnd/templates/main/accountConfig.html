@@ -32,6 +32,24 @@
                      {{ form.hessDataPath(class="select-label")  }}
                    {% endif%}
                  </div>
+
+                 <div class="form-group">
+                   {% if form.ctaIrfsPath.errors %}
+                     {{ form.ctaIrfsPath.label(class="is-invalid") }}
+                     {{ form.ctaIrfsPath(class="is-invalid")}}
+                     <div class="invalid-feedback">
+                       {% for error in form.ctaIrfsPath.errors %}
+                          <div class="invalid">
+                            <i class="fa fa-info-circle"></i> {{ error }}
+                          </div>
+                       {% endfor%}
+                     </div>
+                   {% else %}
+                     {{ form.ctaIrfsPath.label(class="text-label")  }}
+                     {{ form.ctaIrfsPath(class="select-label")  }}
+                   {% endif%}
+                 </div>
+
                </div>
 
                  {{ form.submit(class="sign-in button") }}
@@ -53,7 +71,7 @@
         </div>
 
         <div class="col">
-          
+
         </div>
 
         </div>

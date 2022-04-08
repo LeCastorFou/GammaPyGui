@@ -35,3 +35,10 @@ def load_DB_collection(db_mongo,collection):
     if len(df)>0:
         df = df.drop(['_id'], axis=1)
     return df
+
+def tableToPandas(table):
+    allCol = table.colnames
+    coldict = {}
+    for e in allCol:
+        coldict[e] = list(table[e])
+    return pd.DataFrame(coldict)

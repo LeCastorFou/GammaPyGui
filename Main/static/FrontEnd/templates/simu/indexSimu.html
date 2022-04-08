@@ -8,170 +8,171 @@
           <!-- MENU BOX (LEFT-CONTAINER) -->
           {% include 'common/leftmenu.html' %}
 
-
-         <div class="account block">
-             <h2 class="titular">Simulation with CTA</h2>
-
-             <form method="POST" action="" enctype="multipart/form-data">
-               {{ form.hidden_tag() }}
-
-               <div class="input-container">
-                 <div class="form-group">
-                   {% if form.livetime.errors %}
-                     {{ form.livetime.label(class="is-invalid") }}
-                     {{ form.livetime(class="is-invalid")}}
-                     <div class="invalid-feedback">
-                       {% for error in form.livetime.errors %}
-                          <div class="invalid">
-                            <i class="fa fa-info-circle"></i> {{ error }}
-                          </div>
-                       {% endfor%}
-                     </div>
-                   {% else %}
-                     {{ form.livetime.label(class="text-label")  }}
-                     {{ form.livetime(class="select-label")  }}
-                   {% endif%}
-                 </div>
-               </div>
-
-               <div class="input-container">
-                 <div class="form-group">
-                   {% if form.sIndex.errors %}
-                     {{ form.sIndex.label(class="is-invalid") }}
-                     {{ form.sIndex(class="is-invalid")}}
-                     <div class="invalid-feedback">
-                       {% for error in form.sIndex.errors %}
-                          <div class="invalid">
-                            <i class="fa fa-info-circle"></i> {{ error }}
-                          </div>
-                       {% endfor%}
-                     </div>
-                   {% else %}
-                     {{ form.sIndex.label(class="text-label")  }}
-                     {{ form.sIndex(class="select-label")  }}
-                   {% endif%}
-                 </div>
-               </div>
-
-               <div class="input-container">
-                 <div class="form-group">
-                   {% if form.sFlux.errors %}
-                     {{ form.sFlux.label(class="is-invalid") }}
-                     {{ form.sFlux(class="is-invalid")}}
-                     <div class="invalid-feedback">
-                       {% for error in form.sFlux.errors %}
-                          <div class="invalid">
-                            <i class="fa fa-info-circle"></i> {{ error }}
-                          </div>
-                       {% endfor%}
-                     </div>
-                   {% else %}
-                     {{ form.sFlux.label(class="text-label")  }}
-                     {{ form.sFlux(class="select-label")  }}
-                   {% endif%}
-                 </div>
-               </div>
-
-               <div class="input-container">
-                 <div class="form-group">
-                   {% if form.plong.errors %}
-                     {{ form.plong.label(class="is-invalid") }}
-                     {{ form.plong(class="is-invalid")}}
-                     <div class="invalid-feedback">
-                       {% for error in form.plong.errors %}
-                          <div class="invalid">
-                            <i class="fa fa-info-circle"></i> {{ error }}
-                          </div>
-                       {% endfor%}
-                     </div>
-                   {% else %}
-                     {{ form.plong.label(class="text-label")  }}
-                     {{ form.plong(class="select-label")  }}
-                   {% endif%}
-                 </div>
-               </div>
+          {% include 'common/rightmenu.html' %}
 
 
-               <div class="form-group">
-                 {% if form.plat.errors %}
-                   {{ form.plat.label(class="is-invalid") }}
-                   {{ form.plat(class="is-invalid")}}
-                   <div class="invalid-feedback">
-                     {% for error in form.plat.errors %}
-                        <div class="invalid">
-                          <i class="fa fa-info-circle"></i> {{ error }}
-                        </div>
-                     {% endfor%}
-                   </div>
-                 {% else %}
-                   {{ form.plat.label(class="text-label")  }}
-                   {{ form.plat }}
-                 {% endif%}
-               </div>
-
-               <div class="form-group">
-                 {% if form.slong.errors %}
-                   {{ form.slong.label(class="is-invalid") }}
-                   {{ form.slong(class="is-invalid")}}
-                   <div class="invalid-feedback">
-                     {% for error in form.slong.errors %}
-                        <div class="invalid">
-                          <i class="fa fa-info-circle"></i> {{ error }}
-                        </div>
-                     {% endfor%}
-                   </div>
-                 {% else %}
-                   {{ form.slong.label(class="text-label") }}
-                   {{ form.slong }}
-                 {% endif%}
-               </div>
-
-               <div class="form-group">
-                 {% if form.slat.errors %}
-                   {{ form.slat.label(class="is-invalid") }}
-                   {{ form.slat(class="is-invalid")}}
-                   <div class="invalid-feedback">
-                     {% for error in form.slat.errors %}
-                        <div class="invalid">
-                          <i class="fa fa-info-circle"></i> {{ error }}
-                        </div>
-                     {% endfor%}
-                   </div>
-                 {% else %}
-                   {{ form.slat.label(class="text-label") }}
-                   {{ form.slat }}
-                 {% endif%}
-               </div>
-
-
-               <br>
-               <br>
-                 {{ form.submit(class="sign-in button") }}
-
-             </form>
-
-
-         </div>
 
         </div>
         </div>
 
         <!-- MIDDLE-CONTAINER -->
         <div class="col-6">
-        <div class="rescontainer">
-          <h2 class="titular">CTA simulation</h2>
-          <div class="chart" id="graphJSON">
-            <script type="text/javascript">
-              var graphs = {{graphJSON | safe}};
-              Plotly.plot('graphJSON', graphs, {});
-              </script>
-          </div>
+          <div class="account block">
+              <h2 class="titular">Simulation with CTA</h2>
+              <p>{{message}}</p>
+              <form method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
 
-        </div>
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.livetime.errors %}
+                      {{ form.livetime.label(class="is-invalid") }}
+                      {{ form.livetime(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.livetime.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.livetime.label(class="text-label")  }}
+                      {{ form.livetime(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.sIndex.errors %}
+                      {{ form.sIndex.label(class="is-invalid") }}
+                      {{ form.sIndex(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.sIndex.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.sIndex.label(class="text-label")  }}
+                      {{ form.sIndex(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.sFlux.errors %}
+                      {{ form.sFlux.label(class="is-invalid") }}
+                      {{ form.sFlux(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.sFlux.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.sFlux.label(class="text-label")  }}
+                      {{ form.sFlux(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.plong.errors %}
+                      {{ form.plong.label(class="is-invalid") }}
+                      {{ form.plong(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.plong.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.plong.label(class="text-label")  }}
+                      {{ form.plong(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+
+                <div class="form-group">
+                  {% if form.plat.errors %}
+                    {{ form.plat.label(class="is-invalid") }}
+                    {{ form.plat(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.plat.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.plat.label(class="text-label")  }}
+                    {{ form.plat }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.slong.errors %}
+                    {{ form.slong.label(class="is-invalid") }}
+                    {{ form.slong(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.slong.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.slong.label(class="text-label") }}
+                    {{ form.slong }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.slat.errors %}
+                    {{ form.slat.label(class="is-invalid") }}
+                    {{ form.slat(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.slat.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.slat.label(class="text-label") }}
+                    {{ form.slat }}
+                  {% endif%}
+                </div>
+
+
+                <br>
+                <br>
+                  {{ form.submit(class="sign-in button") }}
+
+              </form>
+
+
+          </div>
         </div>
 
         <div class="col">
-          {% include 'common/rightmenu.html' %}
+          <div class="rescontainer">
+            <h2 class="titular">CTA simulation</h2>
+            <div class="chart" id="graphJSON">
+              <script type="text/javascript">
+                var graphs = {{graphJSON | safe}};
+                Plotly.plot('graphJSON', graphs, {});
+                </script>
+            </div>
+
+          </div>
         </div>
 
         </div>

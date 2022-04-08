@@ -18,4 +18,4 @@ class LaunchSimu(FlaskForm):
     slat = FloatField('Source lattitude :  *', validators=[],default=0)
     sIndex = FloatField('Source flux index :  *', validators=[],default=0)
     sFlux = StringField('Flux @ 1 Tev in cm-2 s-1 TeV-1 (ex:1e-11):  *', validators=[],default=0)
-    submit = SubmitField('Launch analysis')
+    submit = SubmitField('Launch simulation')

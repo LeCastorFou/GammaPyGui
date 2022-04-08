@@ -1,0 +1,76 @@
+{% extends "common/layout.html" %}
+{% block content %}
+
+        <div class="row">
+        <!-- LEFT-CONTAINER -->
+        <div class="col">
+        <div class="left-container container">
+
+          <!-- MENU BOX (LEFT-CONTAINER) -->
+
+         <div class="account block">
+
+
+
+         </div>
+
+        </div>
+        </div>
+
+        <!-- MIDDLE-CONTAINER -->
+        <div class="col-6">
+        <div class="rescontainer">
+          <h2 class="titular">The Gamma Py Gui Tutorial </h2>
+          <p>This is an open source project allowing anyone to use this GUI to performe Gamma Py analysis. Comment, questions and improvement are welcome an can be notify in the <a href="https://github.com/LeCastorFou/GammaPyGui"> GitHub </a>  </p>
+
+          <h2 class="titular">Config set up </h2>
+          <p>
+            First of all the user must defined a path to his data local storage. Go to "Account config". For the moment only H.E.S.S. data path are available. In the form you must provide the absolute path where are located the
+            hdu-index.fits and the obs-index.fits. Once this is done the GUI should automaticaly propose to you the available sources for analysis.
+          </p>
+
+          <h2 class="titular">H.E.S.S analysis </h2>
+          <p>To perform H.E.S.S. Analysis , go to "Analysis" then on the left menu chosse "H.E.S.S. analysis". Belllow the left menu you have a form that you can fill.</p>
+          <p>
+          <ul style="color:white">
+            <li>Choose a name for your analysis (if you already performed an analysis with this name an index _%i is added)</li>
+            <li>Select an available source (depends on your fits files location see above)</li>
+            <li>Defined a min an a max run where to performe the analysis</li>
+            <li>Or select a run list in txt format </li>
+            <li>Clic on Launch analysis </li>
+            <li>Once the browser stops loading ,your analysis is performed. Your results file are available in $PATHTOGUI/GammaPyGui/Main/static/results/NAME_OF_ANALYSIS  </li>
+          </ul>
+          </p>
+
+
+          <h2 class="titular">H.E.S.S spectrum </h2>
+          <ul style="color:white">
+            <li>Choose a name for your analysis (you can choose an existing analysis folder)</li>
+            <li>Select an available source (depends on your fits files location see above)</li>
+            <li>Defined a min an a max run where to performe the analysis</li>
+            <li> Or select a run list in txt format </li>
+            <li> Clic on Launch spectrum </li>
+            <li> Once the browser stops loading ,your analysis is performed. Your results file are available in $PATHTOGUI/GammaPyGui/Main/static/results/NAME_OF_ANALYSIS  </li>
+          </ul>
+
+          <h2 class="titular">CTA simulations </h2>
+          <ul style="color:white">
+            <li>Choose a duration for the observation</li>
+            <li>Select the source index and flux at 1 Tev in cm-2 s-1 TeV-1 (ex:1e-11) </li>
+            <li>Select Pointing position and source position </li>
+            <li> Click on "Launch Simu" : after loading a plot should appear  </li>
+          </ul>
+
+          <h2 class="titular">Results files </h2>
+          <p>If you go to the 'Results' menu you will have acces to all you locally saved results. Select one an get acces to the results files pictures.</p>
+
+        </div>
+        </div>
+
+        <div class="col">
+        </div>
+
+        </div>
+
+
+{% endblock content %}

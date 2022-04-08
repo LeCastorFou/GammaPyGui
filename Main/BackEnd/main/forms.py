@@ -26,4 +26,5 @@ class StartHessAna(FlaskForm):
 
 class SetUpConfig(FlaskForm):
     hessDataPath =  StringField('Path to H.E.S.S fits data folder :' , validators=[])
+    ctaIrfsPath =  StringField('Path to CTA IRFS FITS (ex : $PATH/North_z20_50h/irf_file.fits ) :' , validators=[])
     submit = SubmitField('Apply config')

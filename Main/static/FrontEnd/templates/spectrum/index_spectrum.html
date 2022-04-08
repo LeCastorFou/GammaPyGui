@@ -27,84 +27,7 @@
           {% include 'common/leftmenu.html' %}
 
 
-         <div class="account block">
-             <h2 class="titular">SPECTRUM</h2>
 
-             <form method="POST" action="" enctype="multipart/form-data">
-               {{ form.hidden_tag() }}
-               <p class="text-label"> Select analysis name/folder :</p>
-               <input type="text" id="tags" name="tags">
-
-               <div class="input-container">
-                 <div class="form-group">
-                   {% if form.source.errors %}
-                     {{ form.source.label(class="is-invalid") }}
-                     {{ form.source(class="is-invalid")}}
-                     <div class="invalid-feedback">
-                       {% for error in form.source.errors %}
-                          <div class="invalid">
-                            <i class="fa fa-info-circle"></i> {{ error }}
-                          </div>
-                       {% endfor%}
-                     </div>
-                   {% else %}
-                     {{ form.source.label(class="text-label")  }}
-                     {{ form.source(class="select-label")  }}
-                   {% endif%}
-                 </div>
-               </div>
-
-
-               <div>
-               <p class="text-label"> Or select coordinates :</p>
-
-               </div>
-
-               <div class="form-group">
-                 {% if form.rmin.errors %}
-                   {{ form.rmin.label(class="is-invalid") }}
-                   {{ form.rmin(class="is-invalid")}}
-                   <div class="invalid-feedback">
-                     {% for error in form.rmin.errors %}
-                        <div class="invalid">
-                          <i class="fa fa-info-circle"></i> {{ error }}
-                        </div>
-                     {% endfor%}
-                   </div>
-                 {% else %}
-                   {{ form.rmin.label(class="text-label")  }}
-                   {{ form.rmin }}
-                 {% endif%}
-               </div>
-
-               <div class="form-group">
-                 {% if form.rmax.errors %}
-                   {{ form.rmax.label(class="is-invalid") }}
-                   {{ form.rmax(class="is-invalid")}}
-                   <div class="invalid-feedback">
-                     {% for error in form.rmax.errors %}
-                        <div class="invalid">
-                          <i class="fa fa-info-circle"></i> {{ error }}
-                        </div>
-                     {% endfor%}
-                   </div>
-                 {% else %}
-                   {{ form.rmax.label(class="text-label") }}
-                   {{ form.rmax }}
-                 {% endif%}
-               </div>
-               <br>
-               <p class="text-label"> Or choose a run list (.txt or .dat file containing a list of run)</p>
-               <input class="text-label" type=file name=file>
-               <br>
-               <br>
-
-                 {{ form.submit(class="sign-in button") }}
-
-             </form>
-
-
-         </div>
 
         </div>
         </div>
@@ -112,25 +35,107 @@
         <!-- MIDDLE-CONTAINER -->
         <div class="col-6">
 
-        <div class="rescontainer">
-          <h2 class="titular">Spectrum</h2>
-            <img src="{{url_for('static', filename='results/'+folder+'/'+plot)}}" />
-        </div>
+          <div class="account block">
+              <h2 class="titular">SPECTRUM</h2>
+
+              <form method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <p class="text-label"> Select analysis name/folder :</p>
+                <input type="text" id="tags" name="tags">
+
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.source.errors %}
+                      {{ form.source.label(class="is-invalid") }}
+                      {{ form.source(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.source.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.source.label(class="text-label")  }}
+                      {{ form.source(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.model.errors %}
+                      {{ form.model.label(class="is-invalid") }}
+                      {{ form.model(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.model.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.model.label(class="text-label")  }}
+                      {{ form.model(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+
+                <div>
+                <p class="text-label"> Or select coordinates :</p>
+
+                </div>
+
+                <div class="form-group">
+                  {% if form.rmin.errors %}
+                    {{ form.rmin.label(class="is-invalid") }}
+                    {{ form.rmin(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.rmin.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.rmin.label(class="text-label")  }}
+                    {{ form.rmin }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.rmax.errors %}
+                    {{ form.rmax.label(class="is-invalid") }}
+                    {{ form.rmax(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.rmax.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.rmax.label(class="text-label") }}
+                    {{ form.rmax }}
+                  {% endif%}
+                </div>
+                <br>
+                <p class="text-label"> Or choose a run list (.txt or .dat file containing a list of run)</p>
+                <input class="text-label" type=file name=file>
+                <br>
+                <br>
+
+                  {{ form.submit(class="sign-in button") }}
+
+              </form>
+
+
+          </div>
         </div>
 
         <div class="col">
-          <div class="menu-box block">
-              <h2 class="titular">RESULTS</h2>
-              <ul class="menu-box-menu">
-                  <li>
-                      <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="#6"><span  class="icon  scnd-font-color"></span> MAP <div class="menu-box-number"></div></a>
-                  </li>
-                  <li>
-                      <a class="menu-box-tab" style='color: #FFFFFF;text-decoration: none;' href="#8"><span class="icon  scnd-font-color"></span>Spectrum <div class="menu-box-number"></div></a>
-                  </li>
-
-              </ul>
-          </div>
+          {% include 'common/rightmenu.html' %}
         </div>
 
         </div>
