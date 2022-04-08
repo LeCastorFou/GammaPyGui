@@ -159,8 +159,6 @@ def spectrum1D():
             print("MERGING OBS ...")
             for obs_id, observation in zip(obs_ids, observations):
                 try:
-                    print(obs_id)
-                    print(observation)
                     dataset = dataset_maker.run(dataset_empty.copy(name=str(obs_id)), observation)
                     dataset_on_off = bkg_maker.run(dataset, observation)
                     dataset_on_off = safe_mask_masker.run(dataset_on_off, observation)
@@ -207,6 +205,7 @@ def spectrum1D():
             #### FITTING WITh flux point ##############
             dataset_gammacat = FluxPointsDataset(data=flux_points, name="gammacat")
             flux_points_df = tableToPandas(flux_points.to_table(sed_type="e2dnde", formatted=True))
+            flux_points_df.to_csv(resPath+analysisName+'/fluxpoint_res.csv')
             dataset_gammacat.data.to_table(sed_type="dnde", formatted=True)
 
             if form.model.data == 'PowerLawSpectralModel':
@@ -219,11 +218,19 @@ def spectrum1D():
                 pwl = BrokenPowerLawSpectralModel(index1=2, index2=3,  amplitude="1e-12 cm-2 s-1 TeV-1", ebreak=3)
 
             model = SkyModel(spectral_model=pwl, name="crab")
-            print(model)
+
+
             datasets = Datasets([dataset_gammacat])
             datasets.models = model
             fitter = Fit()
             result_pwl = fitter.run(datasets=datasets)
+
+            original_stdout = sys.stdout
+            with open(resPath+analysisName+'/modelres.txt', 'w') as f:
+                sys.stdout = f # Change the standard output to the file we created.
+                print(datasets.models)
+                sys.stdout = original_stdout
+
             ax = plt.subplot()
             kwargs = {"ax": ax, "sed_type": "e2dnde"}
 
