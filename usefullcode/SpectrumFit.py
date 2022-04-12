@@ -167,6 +167,15 @@ plt.figure(figsize=(8, 5))
 ax = flux_points.plot(sed_type="e2dnde", color="darkorange")
 flux_points.plot_ts_profiles(ax=ax, sed_type="e2dnde");
 
+flux_points_dataset = FluxPointsDataset(
+    data=flux_points, models=model_best_joint
+)
+
+ax_spectrum, ax_residuals = flux_points_dataset.plot_fit()
+ax_spectrum
+print(flux_points_dataset)
+
+ax_spectrum.get_figure().savefig('spectrumfit.jpg')
 
 def tableToPandas(table):
     allCol = table.colnames

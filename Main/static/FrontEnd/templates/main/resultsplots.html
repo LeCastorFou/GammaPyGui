@@ -34,13 +34,19 @@
             {%endfor%}
           {% else %}
             <h2 class="titular">Events distribution</h2>
-            {% for plot in listres[:3]%}
-            <img src="{{url_for('static', filename='results/'+folder+'/'+plot)}}" />
-            {%endfor%}
+            {%if isAnalysis%}
+              {% for plot in listres[:3]%}
+              <img src="{{url_for('static', filename='results/'+folder+'/'+plot)}}" />
+              {%endfor%}
+            {%endif%}
 
             <h2 class="titular">Spectrum</h2>
-            {% if isSpectrum %}
+            {% if isSpectrum and isAnalysis %}
               {% for plot in listres[3:5]%}
+              <img src="{{url_for('static', filename='results/'+folder+'/'+plot)}}" />
+              {%endfor%}
+            {% elif isSpectrum and not isAnalysis %}
+              {% for plot in listres[:3]%}
               <img src="{{url_for('static', filename='results/'+folder+'/'+plot)}}" />
               {%endfor%}
             {% endif %}

@@ -451,57 +451,63 @@ def results():
 
 @main.route("/resultsplots/<string:folder>", methods=['GET'])
 def resultsplots(folder):
-    try:
-        resPath = os.getcwd() + "/Main/static/results/"+folder+'/'
-        listres = os.listdir(resPath)
-        listres = [e for e in listres if (e.endswith('.png') or e.endswith('.jpg')) ]
-        isCTA = False
-        if folder != 'CTA':
-            # Check if spectrum
-            isSpectrum = 'spectrum.jpg' in listres
-            if not isSpectrum:
-                listres = listres+['spectrum.jpg','spectrum2.jpg']
+    #try:
+    resPath = os.getcwd() + "/Main/static/results/"+folder+'/'
+    listres = os.listdir(resPath)
+    listres = [e for e in listres if (e.endswith('.png') or e.endswith('.jpg')) ]
+    isCTA = False
+    isAnalysis= False
+    if folder != 'CTA':
+        # Check if spectrum
+        isAnalysis = 'eventmap.png' in listres
+        isSpectrum = 'spectrum.jpg' in listres
+        if not isSpectrum:
+            listres = listres+['spectrum.jpg','spectrum2.jpg','spectrumfit.jpg']
 
-            # check if data quelity runs here
-            isDQ = 'plotNTel.png' in listres
-            #ORDENING PICTURES
-            listres_order = []
-            for pic in listres :
-                print(pic)
-                if pic.endswith('eventmap.png'):
-                    listres_order = listres_order + [0]
-                if pic.endswith('distribution.png'):
-                    listres_order = listres_order + [1]
-                if pic.endswith('theta2.png'):
-                    listres_order = listres_order + [2]
-                if pic.endswith('trum.jpg'):
-                    listres_order = listres_order + [3]
-                if pic.endswith('trum2.jpg'):
-                    listres_order = listres_order + [4]
-                if isDQ:
-                    if pic.endswith('plotNTel.png'):
-                        listres_order = listres_order + [5]
-                    if pic.endswith('ration.png'):
-                        listres_order = listres_order + [6]
-                    if pic.endswith('Axis.png'):
-                        listres_order = listres_order + [7]
-                    if pic.endswith('Coeff.png'):
-                        listres_order = listres_order + [8]
-                    if pic.endswith('te_mean.png'):
-                        listres_order = listres_order + [9]
-                    if pic.endswith('time_mean.png'):
-                        listres_order = listres_order + [10]
-                    if pic.endswith('Pix.png'):
-                        listres_order = listres_order + [11]
-            df = pd.DataFrame({'files' :listres,'order': listres_order})
-            df = df.sort_values(['order'])
-            listres = list(df['files'])
-        else:
-            isCTA = True
-            isSpectrum = False
-            isDQ = False
+        # check if data quelity runs here
+        isDQ = 'plotNTel.png' in listres
+        #ORDENING PICTURES
+        listres_order = []
+        for pic in listres :
+            print(pic)
+            if pic.endswith('eventmap.png'):
+                listres_order = listres_order + [0]
+            if pic.endswith('distribution.png'):
+                listres_order = listres_order + [1]
+            if pic.endswith('theta2.png'):
+                listres_order = listres_order + [2]
+            if pic.endswith('trum.jpg'):
+                listres_order = listres_order + [3]
+            if pic.endswith('trum2.jpg'):
+                listres_order = listres_order + [4]
+            if pic.endswith('trumfit.jpg'):
+                listres_order = listres_order + [5]
+            if isDQ:
+                if pic.endswith('plotNTel.png'):
+                    listres_order = listres_order + [6]
+                if pic.endswith('ration.png'):
+                    listres_order = listres_order + [7]
+                if pic.endswith('Axis.png'):
+                    listres_order = listres_order + [8]
+                if pic.endswith('Coeff.png'):
+                    listres_order = listres_order + [9]
+                if pic.endswith('te_mean.png'):
+                    listres_order = listres_order + [10]
+                if pic.endswith('time_mean.png'):
+                    listres_order = listres_order + [11]
+                if pic.endswith('Pix.png'):
+                    listres_order = listres_order + [12]
+        print(listres)
+        print(listres_order)
+        df = pd.DataFrame({'files' :listres,'order': listres_order})
+        df = df.sort_values(['order'])
+        listres = list(df['files'])
+    else:
+        isCTA = True
+        isSpectrum = False
+        isDQ = False
 
-        return render_template('main/resultsplots.html',listres=listres, folder = folder, isSpectrum=isSpectrum, isDQ=isDQ, isCTA=isCTA)
-    except Exception as inst:
-        inst = str(inst)
-        return render_template('main/error.html',  inst =inst)
+    return render_template('main/resultsplots.html',listres=listres, folder = folder, isSpectrum=isSpectrum, isDQ=isDQ, isCTA=isCTA,isAnalysis=isAnalysis)
+    #except Exception as inst:
+    #    inst = str(inst)
+    #    return render_template('main/error.html',  inst =inst)

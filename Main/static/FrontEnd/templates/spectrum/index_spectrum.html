@@ -40,7 +40,7 @@
 
               <form method="POST" action="" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
-                <p class="text-label"> Select analysis name/folder :</p>
+                <label class="text-label" style="color:white">Select analysis name/folder :</label>
                 <input type="text" id="tags" name="tags">
 
                 <div class="input-container">
@@ -62,28 +62,178 @@
                   </div>
                 </div>
 
+
                 <div class="input-container">
+                <div class="form-group">
+                <label class="text-label" style="color:white">Fitting model :</label>
+
+                <select id="mymodel" class="select-label" name='modelfit'>
+                  <option value="5"> -- Choose a model -- </option>
+                  <option value="0">PowerLawSpectralModel</option>
+                  <option value="1">BrokenPowerLawSpectralModel</option>
+                  <option value="2">LogParabolaSpectralModel</option>
+                  <option value="3">ExpCutoffPowerLawSpectralModel</option>
+                </select>
+                </div>
+                </div>
+
+
+
+                <div data-dependent='{"mymodel":"0,1,3" }' class="input-container ebreak" id='ebreak'>
                   <div class="form-group">
-                    {% if form.model.errors %}
-                      {{ form.model.label(class="is-invalid") }}
-                      {{ form.model(class="is-invalid")}}
+                    {% if form.index.errors %}
+                      {{ form.index.label(class="is-invalid") }}
+                      {{ form.index(class="is-invalid")}}
                       <div class="invalid-feedback">
-                        {% for error in form.model.errors %}
+                        {% for error in form.index.errors %}
                            <div class="invalid">
                              <i class="fa fa-info-circle"></i> {{ error }}
                            </div>
                         {% endfor%}
                       </div>
                     {% else %}
-                      {{ form.model.label(class="text-label")  }}
-                      {{ form.model(class="select-label")  }}
+                      {{ form.index.label(class="text-label")  }}
+                      {{ form.index(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div data-dependent='{"mymodel": "1" }' class="input-container ebreak" id='ebreak'>
+                  <div class="form-group">
+                    {% if form.index2.errors %}
+                      {{ form.index2.label(class="is-invalid") }}
+                      {{ form.index2(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.index2.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.index2.label(class="text-label")  }}
+                      {{ form.index2(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div data-dependent='{"mymodel": "0,1,2,3" }' class="input-container ebreak" id='ebreak'>
+                  <div class="form-group">
+                    {% if form.amplitude.errors %}
+                      {{ form.amplitude.label(class="is-invalid") }}
+                      {{ form.amplitude(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.amplitude.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.amplitude.label(class="text-label")  }}
+                      {{ form.amplitude(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div data-dependent='{"mymodel": "0,2,3" }' class="input-container ebreak" id='ebreak'>
+                  <div class="form-group">
+                    {% if form.reference.errors %}
+                      {{ form.reference.label(class="is-invalid") }}
+                      {{ form.reference(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.reference.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.reference.label(class="text-label")  }}
+                      {{ form.reference(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div data-dependent='{"mymodel": "1" }' class="input-container ebreak" id='ebreak'>
+                  <div class="form-group">
+                    {% if form.ebreak.errors %}
+                      {{ form.ebreak.label(class="is-invalid") }}
+                      {{ form.ebreak(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.ebreak.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.ebreak.label(class="text-label")  }}
+                      {{ form.ebreak(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div data-dependent='{"mymodel": "3" }' class="input-container ebreak" id='ebreak'>
+                  <div class="form-group">
+                    {% if form.lambdat.errors %}
+                      {{ form.lambdat.label(class="is-invalid") }}
+                      {{ form.lambdat(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.lambdat.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.lambdat.label(class="text-label")  }}
+                      {{ form.lambdat(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div data-dependent='{"mymodel": "2,3" }' class="input-container ebreak" id='ebreak'>
+                  <div class="form-group">
+                    {% if form.alpha.errors %}
+                      {{ form.alpha.label(class="is-invalid") }}
+                      {{ form.alpha(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.alpha.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.alpha.label(class="text-label")  }}
+                      {{ form.alpha(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div data-dependent='{"mymodel": "2" }' class="input-container ebreak" id='ebreak'>
+                  <div class="form-group">
+                    {% if form.beta.errors %}
+                      {{ form.beta.label(class="is-invalid") }}
+                      {{ form.beta(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.beta.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.beta.label(class="text-label")  }}
+                      {{ form.beta(class="select-label")  }}
                     {% endif%}
                   </div>
                 </div>
 
 
                 <div>
-                <p class="text-label"> Or select coordinates :</p>
+                <p class="text-label"> Select Max and Min run number :</p>
 
                 </div>
 
@@ -140,4 +290,111 @@
 
         </div>
 
+<script>
+checkDependencies();
+
+$("select[id]").on('change', function() {
+
+  checkDependencies();
+});
+
+$("[id] > :radio").on('click', function() {
+
+  checkDependencies();
+});
+
+function checkDependencies() {
+
+  $("[data-dependent]").each(function() {
+
+    $dependent = $(this);
+
+    var data = $(this).data("dependent");
+
+    var keyCount = Object.keys(data).length;
+
+    var checkedCount = 0;
+
+    var setVisible = false;
+
+    var dependentValues = $.map(data, function(value, index) {
+      return value;
+    });
+
+    console.log("###########")
+    console.log(dependentValues)
+    console.log(data)
+    console.log(keyCount)
+    $("[id]").each(function() {
+
+      var hasRadioButtons = $(this).find(":radio").length;
+
+      var elementId = $(this).attr("id");
+
+      var elementValue;
+
+      if (hasRadioButtons) {
+
+        elementValue = $(this).find(":checked").val()
+
+      } else {
+
+        elementValue = $(this).val();
+      }
+
+      for (i = 0; i < keyCount; i++) {
+        var dependentId = Object.keys(data)[i];
+
+        //if multiple values for one key
+        var values = dependentValues[i].split(",");
+
+        if (dependentValues.length >1){
+          console.log(values)
+        }
+        for (j = 0; j < values.length; j++) {
+          var dependentValue = values[j];
+
+          if (elementId === dependentId) {
+
+            //check if value selected
+            if (elementValue === dependentValue) {
+
+              checkedCount += 1;
+
+              setVisible = true;
+
+              $dependent.show();
+
+              //found element, exit inner loop
+              break;
+
+            } else {
+
+              //hide if not previously set visible
+              if (!setVisible)
+                $dependent.hide();
+
+              //if all element dependencies found exit inner loop
+              if (keyCount === checkedCount)
+                break;
+
+            }
+          }
+
+        }
+      }
+
+    });
+
+  });
+
+}
+
+</script>
+
+<style>
+  [data-dependent] {
+  display: none;
+  }
+</style>
 {% endblock content %}
