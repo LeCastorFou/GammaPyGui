@@ -209,9 +209,10 @@ def hessana():
                     listrun = [e for e in listrun if e >= form.rmin.data]
                     listrun = [e for e in listrun if e <= form.rmax.data]
 
-                ra_obj = list(obsindex['RA_OBJ'])[0]
-                dec_obj = list(obsindex['DEC_OBJ'])[0]
+                obsindex = obsindex[obsindex['OBJECT'] == form.source.data]
 
+                ra_obj = list(obsindex['RA_OBJ'])[0]
+                dec_obj = list(obsindex['DEC_OBJ'])[0]                
                 obs = data_store.obs(listrun[0])
                 res_analysisName_base = form.analysisName.data
                 res_analysisName = res_analysisName_base
