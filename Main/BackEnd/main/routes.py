@@ -108,10 +108,11 @@ def account():
 
             if hessDataPath_new[-1] != '/':
                 hessDataPath_new = hessDataPath_new + '/'
-
-            if ctaIRFSpath_new[-1] != '/':
-                ctaIRFSpath_new = ctaIRFSpath_new + '/'
-
+            if ctaIRFSpath_new != '' and ctaIRFSpath_new != None:
+                if ctaIRFSpath_new[-1] != '/':
+                    ctaIRFSpath_new = ctaIRFSpath_new + '/'
+            else:
+                ctaIRFSpath_new = ''
             df_config = pd.DataFrame.from_dict({'hessDataPath':[hessDataPath_new],'ctaIRFSpath':[ctaIRFSpath_new]})
             df_config.to_csv(fileConfig)
 

@@ -51,18 +51,19 @@ def Get_MongoDB():
 path = "/Users/vl238644/Documents/GitHub/HESS/GammaPyGui"
 
 allruns = np.unique(df['OBS_ID'])
+
 for run in allruns:
     print(run)
-    dat = Table.read(path + '/Main/static/hess_dl3_dr1/data/hess_dl3_dr1_obs_id_0'+str(run)+'.fits.gz', format='fits')
+    dat = Table.read('/Users/vl238644/Documents/GitHub/Analysis/GammaPy/hess_dl3_dr1/data/hess_dl3_dr1_obs_id_020136.fits.gz', format='fits')
     df = dat.to_pandas()
     df['run']=run
-    client = pymongo.MongoClient("mongodb://hess:CT5io!@51.15.204.85/HESS")
+    client = pymongo.MongoClient("mongodb://hess:****@51.15.204.85/HESS")
     db = client['HESS']
     my_dict = df.to_dict('record')
     db['run_'+str(run)].insert_many(my_dict)
 
 
-client = pymongo.MongoClient("mongodb://hess:CT5io!@51.15.204.85/HESS")
+client = pymongo.MongoClient("mongodb://hess:****@51.15.204.85/HESS")
 db = client['HESS']
 cursor = db['PKS2155304_steady'].find()
 df =  pd.DataFrame(list(cursor))
@@ -91,3 +92,16 @@ my_dict = df_hdu.to_dict('record')
 db['hdu-index'].insert_many(my_dict)
 
 db['test'].drop()
+
+
+
+dat = Table.read('/Users/vl238644/Documents/HESS/GammaPy/fits_files/std_ImPACT_fullEnclosure/run037400-037599/run037496/hess_events_037496.fits.gz', format='fits')
+df = dat.to_pandas()
+
+import plotly.express as px
+import plotly
+import plotly.figure_factory as ff
+import plotly.graph_objects as go
+
+fig = px.density_heatmap(df, x="RA", y="DEC",nbinsx=500, nbinsy=500)
+fig.show()

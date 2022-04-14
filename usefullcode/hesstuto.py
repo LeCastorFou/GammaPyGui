@@ -29,6 +29,17 @@ data_store.info()
 data_store.obs_table[:][["OBS_ID", "DATE-OBS", "RA_PNT", "DEC_PNT", "OBJECT"]]
 data_store.obs_table[:]
 obs = data_store.get_observations([18361,18410,18415])
+print(obs)
+
+datasets = Datasets()
+obs_ids = [18361,18410,18415]
+for obs_id, observation in zip(obs_ids, obs):
+    dataset = dataset_maker.run(dataset_empty.copy(name=str(obs_id)), observation)
+    dataset_on_off = bkg_maker.run(dataset, observation)
+    dataset_on_off = safe_mask_masker.run(dataset_on_off, observation)
+    datasets.append(dataset_on_off)
+
+
 obs_list_events = [e.events for e in obs]
 combined_events = EventList.from_stack(obs_list_events)
 combined_events.peek()
@@ -38,6 +49,8 @@ position = SkyCoord(ra=83.63, dec=22.01, unit="deg", frame="icrs")
 theta2_axis = MapAxis.from_bounds(0, 0.2, nbin=20, interp="lin", unit="deg2")
 
 observations = data_store.get_observations([23523, 23526])
+
+
 theta2_table = make_theta_squared_table(
     observations=observations,
     position=position,

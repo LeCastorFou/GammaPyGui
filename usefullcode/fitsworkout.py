@@ -6,7 +6,7 @@ import math
 # scp vlefranc@lfs2.mpi-hd.mpg.de:/lfs/l7/hess/fits/hap-hd/fits_prod05/hess1/std_ImPACT_fullEnclosure/*.fits.gz  .
 table = Table.read('/Users/vl238644/Documents/GitHub/GammaPyGui/Main/static/FITS/obs-index.fits.gz', format='fits')
 df = table.to_pandas()
-
+df
 df.columns
 df['OBS_ID']
 df['OBJECT'] = df['OBJECT'].str.decode("utf-8")
