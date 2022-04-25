@@ -150,291 +150,351 @@ def account():
 @main.route("/", methods=['GET', 'POST'])
 @main.route("/hessana", methods=['GET', 'POST'])
 def hessana():
+    #try:
+    form = StartHessAna()
+    configPath = os.getcwd() + "/Main/static/configFile/"
+    resPath = os.getcwd() + "/Main/static/results/"
+    confExist = os.path.isfile(configPath+"config.csv")
+    fileConfig = configPath+"config.csv"
+    hessDataPath = ""
+    pathConf = False
     try:
-        form = StartHessAna()
-        configPath = os.getcwd() + "/Main/static/configFile/"
-        resPath = os.getcwd() + "/Main/static/results/"
-        confExist = os.path.isfile(configPath+"config.csv")
-        fileConfig = configPath+"config.csv"
-        hessDataPath = ""
-        pathConf = False
-        try:
-            df_config = pd.read_csv(fileConfig)
-            hessDataPath = list(df_config['hessDataPath'])[0]
-            pathConf = True
-        except:
-            print("No HESS DATA PATH defined")
+        df_config = pd.read_csv(fileConfig)
+        hessDataPath = list(df_config['hessDataPath'])[0]
+        pathConf = True
+    except:
+        print("No HESS DATA PATH defined")
 
-        table = Table.read(hessDataPath+'/obs-index.fits.gz', format='fits')
-        obsindex = table.to_pandas()
-        obsindex["OBJECT"] =  [ e.decode("utf-8")  for e in obsindex["OBJECT"] ]
-        object  = np.unique(list(obsindex["OBJECT"]))
-        objects = [(e,e) for e in object]
-        form.source.choices = objects
+    table = Table.read(hessDataPath+'/obs-index.fits.gz', format='fits')
+    obsindex = table.to_pandas()
+    obsindex["OBJECT"] =  [ e.decode("utf-8")  for e in obsindex["OBJECT"] ]
+    object  = np.unique(list(obsindex["OBJECT"]))
+    objects = [(e,e) for e in object]
+    form.source.choices = objects
 
-        isRunList = True
+    isRunList = True
 
-        if form.validate_on_submit():
-            if pathConf:
-                if 'file' not in request.files:
-                    flash('No file part')
-                    isRunList = False
-                file = request.files['file']
-                # If the user does not select a file, the browser submits an
-                # empty file without a filename.
-                if file.filename == '':
-                    flash('No selected file')
-                    isRunList = False
-                if isRunList:
-                    filename = secure_filename(file.filename)
-                    file.save("/tmp/"+filename)
-                    f = open("/tmp/"+file.filename, "r")
-                    runlist = []
-                    for x in f:
-                        runlist = runlist + [x]
-                    if os.path.exists("/tmp/"+filename):
-                        os.remove("/tmp/"+ filename)
-                    runlist = [int(i) for i in runlist if i != '\n']
+    if form.validate_on_submit():
+        if pathConf:
+            if 'file' not in request.files:
+                flash('No file part')
+                isRunList = False
+            file = request.files['file']
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename.
+            if file.filename == '':
+                flash('No selected file')
+                isRunList = False
+            if isRunList:
+                filename = secure_filename(file.filename)
+                file.save("/tmp/"+filename)
+                f = open("/tmp/"+file.filename, "r")
+                runlist = []
+                for x in f:
+                    runlist = runlist + [x]
+                if os.path.exists("/tmp/"+filename):
+                    os.remove("/tmp/"+ filename)
+                runlist = [int(i) for i in runlist if i != '\n']
 
 
-                data_store = DataStore.from_dir(hessDataPath)
-                #data_store.obs_table[:][["OBS_ID", "DATE-OBS", "RA_PNT", "DEC_PNT", "OBJECT"]]
+            data_store = DataStore.from_dir(hessDataPath)
+            #data_store.obs_table[:][["OBS_ID", "DATE-OBS", "RA_PNT", "DEC_PNT", "OBJECT"]]
+            obsindex_all = obsindex
+            obsindex = obsindex[obsindex['OBJECT'] == form.source.data]
+            listrun = list(obsindex_all['OBS_ID'])
+            ra_obj = list(obsindex['RA_OBJ'])[0]
+            dec_obj = list(obsindex['DEC_OBJ'])[0]
+            print(obsindex_all.columns)
+            obsindex_all = obsindex_all[( abs(obsindex_all['RA_PNT']) < ra_obj + 10) & (abs(obsindex_all['RA_PNT']) > ra_obj - 10 )]
+            obsindex_all = obsindex_all[( abs(obsindex_all['DEC_PNT']) < dec_obj + 10) & (abs(obsindex_all['DEC_PNT']) > dec_obj - 10 )]
+            obsindex_all['Distance'] = [ math.sqrt((ra_obj-list(obsindex_all['RA_PNT'])[i])**2+(dec_obj-list(obsindex_all['DEC_PNT'])[i])**2 ) for i in range(len(obsindex_all))]
+            obsindex_all = obsindex_all[obsindex_all['Distance'] <= 2]
+            print(obsindex_all['Distance'])
+            listrun_select_circle = list(obsindex_all['OBS_ID'])
 
-                listrun = list(obsindex[obsindex['OBJECT'] == form.source.data]['OBS_ID'])
+            if isRunList:
+                print(runlist)
+                listrun = [e  for e in listrun if e in runlist]
+            else:
+                listrun = [e for e in listrun_select_circle if e >= form.rmin.data]
+                listrun = [e for e in listrun_select_circle if e <= form.rmax.data]
 
-                if isRunList:
-                    print(runlist)
-                    listrun = [e  for e in listrun if e in runlist]
-                else:
-                    listrun = [e for e in listrun if e >= form.rmin.data]
-                    listrun = [e for e in listrun if e <= form.rmax.data]
-
-                obsindex = obsindex[obsindex['OBJECT'] == form.source.data]
-
-                ra_obj = list(obsindex['RA_OBJ'])[0]
-                dec_obj = list(obsindex['DEC_OBJ'])[0]                
-                obs = data_store.obs(listrun[0])
-                res_analysisName_base = form.analysisName.data
-                res_analysisName = res_analysisName_base
-                i = 0
-                while  os.path.exists(resPath+'/'+res_analysisName):
-                    i = i + 1
-                    res_analysisName = res_analysisName_base +'_'+str(i)
-
-                ## Check if file exists
-                list_run_all = listrun
-                runs_notexist = []
-                for e in list_run_all:
-                    print(e)
-                    try:
-                        obs = data_store.obs(e)
-                        print("### RUN : "+str(e)+" = " + str(obs.observation_time_duration)+" DURATION  #####")
-                    except Exception:
-                        print("RUN : "+str(e)+" ERROR")
-                        runs_notexist = runs_notexist + [e]
-                listrun = [run for run in list_run_all if run not in runs_notexist]
-
-
-                print(pd.DataFrame(listrun))
-                print(resPath+'run_list_'+res_analysisName+'.csv')
-
-                obs = data_store.get_observations(listrun)
-                obs_list_events = [e.events for e in obs]
-                combined_events = EventList.from_stack(obs_list_events)
-
-                ### Creat events map
-                plot_map_image(combined_events,resPath,res_analysisName,form.source.data)
-
-                ### Create Theta2
-                position = SkyCoord(ra=ra_obj, dec=dec_obj, unit="deg", frame="icrs")
-                theta2_axis = MapAxis.from_bounds(0, 0.2, nbin=20, interp="lin", unit="deg2")
-
-                observations = data_store.get_observations(listrun)
-                theta2_table = make_theta_squared_table(
-                    observations=observations,
-                    position=position,
-                    theta_squared_axis=theta2_axis,
-                )
-                plot_theta_squared_table_custom(theta2_table,resPath,res_analysisName,form.source.data)
-                pd.DataFrame(listrun).to_csv(resPath+res_analysisName+'/run_list_'+res_analysisName+'.csv')
-
-                # getting runlist summary from web summary
+            obs = data_store.obs(listrun[0])
+            res_analysisName_base = form.analysisName.data
+            res_analysisName = res_analysisName_base
+            i = 0
+            while  os.path.exists(resPath+'/'+res_analysisName):
+                i = i + 1
+                res_analysisName = res_analysisName_base +'_'+str(i)
+            # CREATE RES DIRECTORY
+            os.makedirs(resPath+'/'+res_analysisName)
+            ## Check if file exists
+            list_run_all = listrun
+            runs_notexist = []
+            for e in list_run_all:
+                print(e)
                 try:
-                    response = requests.post(webSumAddress+"uploadrunlistSumAPI", data=json.dumps({"runlist": listrun}))
-
-                    res= response.json()
-                    df_final = pd.DataFrame({
-                    'Ntel':res['plotNTel']['Ntel'],
-                    'Value':res['plotNTel']['valTel'],
-                    'Duration':res['plotDuration']['runDuration'],
-                    'Distance':res['plotOffAxis']['offAxis']
-                    })
-
-
-                    fig1 = px.histogram(df_final, x="Ntel", color ='Value')
-                    fig1.update_traces(hovertemplate=None)
-                    fig1.update_layout(hovermode='x unified')
-                    fig1.write_image(resPath+res_analysisName+"/plotNTel.png")
-                    fig2 = px.histogram(df_final, x="Duration")
-                    fig2.update_traces(hovertemplate=None)
-                    fig2.update_layout(hovermode='x unified')
-                    fig2.write_image(resPath+res_analysisName+"/plotRunsDuration.png")
-                    fig3 = px.histogram(df_final, x="Distance")
-                    fig3.update_traces(hovertemplate=None)
-                    fig3.update_layout(hovermode='x unified')
-                    fig3.write_image(resPath+res_analysisName+"/plotOffAxis.png")
-
-                    df_atm = pd.DataFrame({
-                    'TransparencyCoefficient_CT1':res['transparency']['TransparencyCoefficient_CT1'],
-                    'TransparencyCoefficient_CT2':res['transparency']['TransparencyCoefficient_CT2'],
-                    'TransparencyCoefficient_CT3':res['transparency']['TransparencyCoefficient_CT3'],
-                    'TransparencyCoefficient_CT4':res['transparency']['TransparencyCoefficient_CT4'],
-                    'TransparencyCoefficient_CT5':res['transparency']['TransparencyCoefficient_CT5'],
-                    'TimeOfStart':res['transparency']['TimeOfStart'],
-                    'Run':res['transparency']['Run']
-                    })
-                    fig = go.Figure()
-                    for e in ['TransparencyCoefficient_CT1','TransparencyCoefficient_CT2','TransparencyCoefficient_CT3','TransparencyCoefficient_CT4','TransparencyCoefficient_CT5']:
-                        fig.add_trace(go.Scatter( x=df_atm.TimeOfStart,y=df_atm[e],name=e))
-                    fig.update_traces(mode="markers", hovertemplate=None)
-                    fig.update_layout(hovermode='x unified')
-                    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-                    fig = go.Figure()
-                    for e in ['TransparencyCoefficient_CT1','TransparencyCoefficient_CT2','TransparencyCoefficient_CT3','TransparencyCoefficient_CT4','TransparencyCoefficient_CT5']:
-                        fig.add_trace(go.Scatter( x=df_atm.Run,y=df_atm[e],name=e))
-                    fig.update_traces(mode="markers", hovertemplate=None)
-                    fig.update_layout(hovermode='x unified')
-                    fig.write_image(resPath+res_analysisName+"/transparencyCoeff.png")
-
-                    df_bp = pd.DataFrame({
-                    'Num_Broken':res['bp']['Num_Broken'],
-                    'Telescope':res['bp']['Telescope'],
-                    'TimeOfStart':res['bp']['TimeOfStart']
-                    })
-                    PlotCreator().stdScatterPlotTelCol(data=df_bp, xcol='TimeOfStart', ycol='Num_Broken', colorcol='Telescope', hoverdata='Num_Broken',name =resPath+res_analysisName+"/nBrokenPix.png")
-
-
-                    df_dead = pd.DataFrame({
-                    'Deadtime_mean':res['deadtime']['Deadtime_mean'],
-                    'Telescope':res['deadtime']['Telescope'],
-                    'TimeOfStart':res['deadtime']['TimeOfStart']
-                    })
-                    PlotCreator().stdScatterPlotTelCol(data=df_dead, xcol='TimeOfStart', ycol='Deadtime_mean', colorcol='Telescope', hoverdata='Deadtime_mean',name =resPath+res_analysisName+"/Deadtime_mean.png")
-
-
-                    df_trigger = pd.DataFrame({
-                    'Rate_mean':res['trigger']['Rate_mean'],
-                    'Telescope':res['trigger']['Telescope'],
-                    'TimeOfStart':res['trigger']['TimeOfStart']
-                    })
-                    PlotCreator().stdScatterPlotTelCol(data=df_trigger, xcol='TimeOfStart', ycol='Rate_mean', colorcol='Telescope', hoverdata='Rate_mean',name =resPath+res_analysisName+"/Rate_mean.png")
+                    obs = data_store.obs(e)
+                    print("### RUN : "+str(e)+" = " + str(obs.observation_time_duration)+" DURATION  #####")
                 except Exception:
-                    print("NO CONNECTION TO WEB SUMMARY !!!!")
+                    print("RUN : "+str(e)+" ERROR")
+                    runs_notexist = runs_notexist + [e]
+            listrun = [run for run in list_run_all if run not in runs_notexist]
 
 
-                ###################################
-                # Compute ring background significance
-                print("### Computing ring background #####")
-                ra_src = ra_obj
-                dec_src = dec_obj
-                print("### POSITION #####")
-                print(ra_src)
-                print(dec_src)
-                observations = data_store.get_observations(listrun)
+            print(pd.DataFrame(listrun))
+            print(resPath+'run_list_'+res_analysisName+'.csv')
 
-                energy_axis = MapAxis.from_energy_bounds(1.0, 10.0, 4, unit="TeV")
+            obs = data_store.get_observations(listrun)
 
-                geom = WcsGeom.create(
-                    skydir=(ra_src, dec_src),
-                    binsz=0.02,
-                    width=(2, 2),
-                    frame="icrs",
-                    proj="CAR",
-                    axes=[energy_axis],
-                )
+            ra_src = ra_obj
+            dec_src = dec_obj
+            print("### POSITION #####")
+            print(ra_src)
+            print(dec_src)
+            observations = data_store.get_observations(listrun)
 
-                # Reduced IRFs are defined in true energy (i.e. not measured energy).
-                energy_axis_true = MapAxis.from_energy_bounds(0.5, 20, 10, unit="TeV", name="energy_true")
+            energy_axis = MapAxis.from_energy_bounds(1.0, 10.0, 4, unit="TeV")
 
-                stacked = MapDataset.create(geom=geom, energy_axis_true=energy_axis_true, name="crab-stacked")
-                offset_max = 2.5 * u.deg
-                maker = MapDatasetMaker()
-                maker_safe_mask = SafeMaskMaker(methods=["offset-max", "aeff-max"], offset_max=offset_max)
-                circle = CircleSkyRegion(center=SkyCoord(str(ra_src)+" deg", str(dec_src)+" deg"), radius=0.2 * u.deg)
-                exclusion_mask = ~geom.region_mask(regions=[circle])
-                maker_fov = FoVBackgroundMaker(method="fit", exclusion_mask=exclusion_mask)
+            geom = WcsGeom.create(
+                skydir=(ra_src, dec_src),
+                binsz=0.02,
+                width=(2, 2),
+                frame="icrs",
+                proj="CAR",
+                axes=[energy_axis],
+            )
 
-                print("### Stack observations ... ")
-                for obs in observations:
-                    try:
-                        # First a cutout of the target map is produced
-                        cutout = stacked.cutout(obs.pointing_radec, width=2 * offset_max, name=f"obs-{obs.obs_id}")
-                        # A MapDataset is filled in this cutout geometry
-                        dataset = maker.run(cutout, obs)
-                        # The data quality cut is applied
-                        dataset = maker_safe_mask.run(dataset, obs)
-                        # fit background model
-                        dataset = maker_fov.run(dataset)
-                        print(f"Background norm obs {obs.obs_id}: {dataset.background_model.spectral_model.norm.value:.2f}")
-                        # The resulting dataset cutout is stacked onto the final one
-                        stacked.stack(dataset)
-                    except Exception:
-                        print('ERROR with '+ str(obs))
-                        print(str(obs))
+            # Reduced IRFs are defined in true energy (i.e. not measured energy).
+            energy_axis_true = MapAxis.from_energy_bounds(0.5, 20, 10, unit="TeV", name="energy_true")
+
+            stacked = MapDataset.create(geom=geom, energy_axis_true=energy_axis_true, name="crab-stacked")
+            offset_max = 2.5 * u.deg
+            maker = MapDatasetMaker()
+            maker_safe_mask = SafeMaskMaker(methods=["offset-max", "aeff-max"], offset_max=offset_max)
+            circle = CircleSkyRegion(center=SkyCoord(str(ra_src)+" deg", str(dec_src)+" deg"), radius=0.2 * u.deg)
+            exclusion_mask = ~geom.region_mask(regions=[circle])
+            maker_fov = FoVBackgroundMaker(method="fit", exclusion_mask=exclusion_mask)
+
+            observations = data_store.get_observations(listrun)
+            for obs in observations:
+                try:
+                    # First a cutout of the target map is produced
+                    cutout = stacked.cutout(obs.pointing_radec, width=2 * offset_max, name=f"obs-{obs.obs_id}")
+                    # A MapDataset is filled in this cutout geometry
+                    dataset = maker.run(cutout, obs)
+                    # The data quality cut is applied
+                    dataset = maker_safe_mask.run(dataset, obs)
+                    # fit background model
+                    dataset = maker_fov.run(dataset)
+                    print(f"Background norm obs {obs.obs_id}: {dataset.background_model.spectral_model.norm.value:.2f}")
+                    # The resulting dataset cutout is stacked onto the final one
+                    stacked.stack(dataset)
+                except Exception:
+                    print('ERROR with '+ str(obs))
+                    print(str(obs))
+            print(stacked)
+            filename = resPath+'/'+res_analysisName + "/stacked-dataset.fits.gz"
+            stacked.write(filename, overwrite=True)
+            pd.DataFrame(listrun).to_csv(resPath+res_analysisName+'/run_list_'+res_analysisName+'.csv')
 
 
-                stacked.counts.sum_over_axes().smooth(0.05 * u.deg).plot(stretch="sqrt", add_cbar=True);
+            """
+            obs_list_events = [e.events for e in obs]
+            combined_events = EventList.from_stack(obs_list_events)
+            ### Creat events map
+            plot_map_image(combined_events,resPath,res_analysisName,form.source.data)
 
-                # Define map geometry for binned simulation
-                energy_reco = MapAxis.from_edges(np.logspace(-1.0, 1.0, 10), unit="TeV", name="energy", interp="log")
-                geom = WcsGeom.create(skydir=(ra_src, dec_src),binsz=0.02,width=(2, 2),frame="icrs",axes=[energy_reco])
+            ### Create Theta2
+            position = SkyCoord(ra=ra_obj, dec=dec_obj, unit="deg", frame="icrs")
+            theta2_axis = MapAxis.from_bounds(0, 0.2, nbin=20, interp="lin", unit="deg2")
 
-                # It is usually useful to have a separate binning for the true energy axis
-                energy_true = MapAxis.from_edges(np.logspace(-1.5, 1.5, 30), unit="TeV", name="energy_true", interp="log")
-                energy = MapAxis.from_edges(np.logspace(-1.5, 1.5, 30), unit="TeV", name="energy", interp="log")
+            observations = data_store.get_observations(listrun)
+            theta2_table = make_theta_squared_table(
+                observations=observations,
+                position=position,
+                theta_squared_axis=theta2_axis,
+            )
+            plot_theta_squared_table_custom(theta2_table,resPath,res_analysisName,form.source.data)
+            pd.DataFrame(listrun).to_csv(resPath+res_analysisName+'/run_list_'+res_analysisName+'.csv')
 
-                #geom = datasets[0].geoms['geom']
-                energy_axis = energy
-                geom_image = geom.to_image().to_cube([energy_axis.squash()])
+            # getting runlist summary from web summary
+            try:
+                response = requests.post(webSumAddress+"uploadrunlistSumAPI", data=json.dumps({"runlist": listrun}))
 
-                # Make the exclusion mask
-                pointing = SkyCoord(ra_src, dec_src, unit="deg", frame="icrs")
-                regions = CircleSkyRegion(center=SkyCoord(ra_src, dec_src, unit="deg"), radius=0.5 * u.deg)
-                exclusion_mask = ~geom_image.region_mask([regions])
-                exclusion_mask.geom
+                res= response.json()
+                df_final = pd.DataFrame({
+                'Ntel':res['plotNTel']['Ntel'],
+                'Value':res['plotNTel']['valTel'],
+                'Duration':res['plotDuration']['runDuration'],
+                'Distance':res['plotOffAxis']['offAxis']
+                })
 
-                print("### Ring background ... #####")
-                ring_maker = RingBackgroundMaker(r_in="0.5 deg", width="0.3 deg")
 
-                energy_axis_true = energy
-                dataset_on_off = ring_maker.run(stacked.to_image())
-                stacked.to_image().info_dict()
+                fig1 = px.histogram(df_final, x="Ntel", color ='Value')
+                fig1.update_traces(hovertemplate=None)
+                fig1.update_layout(hovermode='x unified')
+                fig1.write_image(resPath+res_analysisName+"/plotNTel.png")
+                fig2 = px.histogram(df_final, x="Duration")
+                fig2.update_traces(hovertemplate=None)
+                fig2.update_layout(hovermode='x unified')
+                fig2.write_image(resPath+res_analysisName+"/plotRunsDuration.png")
+                fig3 = px.histogram(df_final, x="Distance")
+                fig3.update_traces(hovertemplate=None)
+                fig3.update_layout(hovermode='x unified')
+                fig3.write_image(resPath+res_analysisName+"/plotOffAxis.png")
 
-                estimator = ExcessMapEstimator(0.04 * u.deg, selection_optional=[])
-                lima_maps = estimator.run(dataset_on_off)
+                df_atm = pd.DataFrame({
+                'TransparencyCoefficient_CT1':res['transparency']['TransparencyCoefficient_CT1'],
+                'TransparencyCoefficient_CT2':res['transparency']['TransparencyCoefficient_CT2'],
+                'TransparencyCoefficient_CT3':res['transparency']['TransparencyCoefficient_CT3'],
+                'TransparencyCoefficient_CT4':res['transparency']['TransparencyCoefficient_CT4'],
+                'TransparencyCoefficient_CT5':res['transparency']['TransparencyCoefficient_CT5'],
+                'TimeOfStart':res['transparency']['TimeOfStart'],
+                'Run':res['transparency']['Run']
+                })
+                fig = go.Figure()
+                for e in ['TransparencyCoefficient_CT1','TransparencyCoefficient_CT2','TransparencyCoefficient_CT3','TransparencyCoefficient_CT4','TransparencyCoefficient_CT5']:
+                    fig.add_trace(go.Scatter( x=df_atm.TimeOfStart,y=df_atm[e],name=e))
+                fig.update_traces(mode="markers", hovertemplate=None)
+                fig.update_layout(hovermode='x unified')
+                graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+                fig = go.Figure()
+                for e in ['TransparencyCoefficient_CT1','TransparencyCoefficient_CT2','TransparencyCoefficient_CT3','TransparencyCoefficient_CT4','TransparencyCoefficient_CT5']:
+                    fig.add_trace(go.Scatter( x=df_atm.Run,y=df_atm[e],name=e))
+                fig.update_traces(mode="markers", hovertemplate=None)
+                fig.update_layout(hovermode='x unified')
+                fig.write_image(resPath+res_analysisName+"/transparencyCoeff.png")
 
-                significance_map = lima_maps["sqrt_ts"]
-                excess_map = lima_maps["npred_excess"]
-                print("### PLOTING ... #####")
-                print("saving in " + resPath+res_analysisName)
-                plotRingSigni(significance_map,excess_map,np.array([exclusion_mask.data[0]]),resPath+res_analysisName,res_analysisName)
+                df_bp = pd.DataFrame({
+                'Num_Broken':res['bp']['Num_Broken'],
+                'Telescope':res['bp']['Telescope'],
+                'TimeOfStart':res['bp']['TimeOfStart']
+                })
+                PlotCreator().stdScatterPlotTelCol(data=df_bp, xcol='TimeOfStart', ycol='Num_Broken', colorcol='Telescope', hoverdata='Num_Broken',name =resPath+res_analysisName+"/nBrokenPix.png")
 
-                plt.figure(figsize=(10, 10))
-                ax1 = plt.subplot(221, projection=significance_map.geom.wcs)
-                ax2 = plt.subplot(222, projection=excess_map.geom.wcs)
 
-                ax1.set_title("Significance map")
-                significance_map.plot(ax=ax1, add_cbar=True)
+                df_dead = pd.DataFrame({
+                'Deadtime_mean':res['deadtime']['Deadtime_mean'],
+                'Telescope':res['deadtime']['Telescope'],
+                'TimeOfStart':res['deadtime']['TimeOfStart']
+                })
+                PlotCreator().stdScatterPlotTelCol(data=df_dead, xcol='TimeOfStart', ycol='Deadtime_mean', colorcol='Telescope', hoverdata='Deadtime_mean',name =resPath+res_analysisName+"/Deadtime_mean.png")
 
-                ax2.set_title("Excess map")
-                excess_map.plot(ax=ax2, add_cbar=True)
 
-            return render_template('main/hessana.html',form = form, graphJSON = {})
+                df_trigger = pd.DataFrame({
+                'Rate_mean':res['trigger']['Rate_mean'],
+                'Telescope':res['trigger']['Telescope'],
+                'TimeOfStart':res['trigger']['TimeOfStart']
+                })
+                PlotCreator().stdScatterPlotTelCol(data=df_trigger, xcol='TimeOfStart', ycol='Rate_mean', colorcol='Telescope', hoverdata='Rate_mean',name =resPath+res_analysisName+"/Rate_mean.png")
+            except Exception:
+                print("NO CONNECTION TO WEB SUMMARY !!!!")
 
-        return render_template('main/hessana.html', form = form, graphJSON ={})
-    except Exception as inst:
-        inst = str(inst)
-        return render_template('main/error.html',  inst =inst)
+
+            ###################################
+            # Compute ring background significance
+            print("### Computing ring background #####")
+            ra_src = ra_obj
+            dec_src = dec_obj
+            print("### POSITION #####")
+            print(ra_src)
+            print(dec_src)
+            observations = data_store.get_observations(listrun)
+
+            energy_axis = MapAxis.from_energy_bounds(1.0, 10.0, 4, unit="TeV")
+
+            geom = WcsGeom.create(
+                skydir=(ra_src, dec_src),
+                binsz=0.02,
+                width=(2, 2),
+                frame="icrs",
+                proj="CAR",
+                axes=[energy_axis],
+            )
+
+            # Reduced IRFs are defined in true energy (i.e. not measured energy).
+            energy_axis_true = MapAxis.from_energy_bounds(0.5, 20, 10, unit="TeV", name="energy_true")
+
+            stacked = MapDataset.create(geom=geom, energy_axis_true=energy_axis_true, name="crab-stacked")
+            offset_max = 2.5 * u.deg
+            maker = MapDatasetMaker()
+            maker_safe_mask = SafeMaskMaker(methods=["offset-max", "aeff-max"], offset_max=offset_max)
+            circle = CircleSkyRegion(center=SkyCoord(str(ra_src)+" deg", str(dec_src)+" deg"), radius=0.2 * u.deg)
+            exclusion_mask = ~geom.region_mask(regions=[circle])
+            maker_fov = FoVBackgroundMaker(method="fit", exclusion_mask=exclusion_mask)
+
+            print("### Stack observations ... ")
+            for obs in observations:
+                try:
+                    # First a cutout of the target map is produced
+                    cutout = stacked.cutout(obs.pointing_radec, width=2 * offset_max, name=f"obs-{obs.obs_id}")
+                    # A MapDataset is filled in this cutout geometry
+                    dataset = maker.run(cutout, obs)
+                    # The data quality cut is applied
+                    dataset = maker_safe_mask.run(dataset, obs)
+                    # fit background model
+                    dataset = maker_fov.run(dataset)
+                    print(f"Background norm obs {obs.obs_id}: {dataset.background_model.spectral_model.norm.value:.2f}")
+                    # The resulting dataset cutout is stacked onto the final one
+                    stacked.stack(dataset)
+                except Exception:
+                    print('ERROR with '+ str(obs))
+                    print(str(obs))
+
+
+            stacked.counts.sum_over_axes().smooth(0.05 * u.deg).plot(stretch="sqrt", add_cbar=True);
+
+            # Define map geometry for binned simulation
+            energy_reco = MapAxis.from_edges(np.logspace(-1.0, 1.0, 10), unit="TeV", name="energy", interp="log")
+            geom = WcsGeom.create(skydir=(ra_src, dec_src),binsz=0.02,width=(2, 2),frame="icrs",axes=[energy_reco])
+
+            # It is usually useful to have a separate binning for the true energy axis
+            energy_true = MapAxis.from_edges(np.logspace(-1.5, 1.5, 30), unit="TeV", name="energy_true", interp="log")
+            energy = MapAxis.from_edges(np.logspace(-1.5, 1.5, 30), unit="TeV", name="energy", interp="log")
+
+            #geom = datasets[0].geoms['geom']
+            energy_axis = energy
+            geom_image = geom.to_image().to_cube([energy_axis.squash()])
+
+            # Make the exclusion mask
+            pointing = SkyCoord(ra_src, dec_src, unit="deg", frame="icrs")
+            regions = CircleSkyRegion(center=SkyCoord(ra_src, dec_src, unit="deg"), radius=0.5 * u.deg)
+            exclusion_mask = ~geom_image.region_mask([regions])
+            exclusion_mask.geom
+
+            print("### Ring background ... #####")
+            ring_maker = RingBackgroundMaker(r_in="0.5 deg", width="0.3 deg")
+
+            energy_axis_true = energy
+            dataset_on_off = ring_maker.run(stacked.to_image())
+            stacked.to_image().info_dict()
+
+            estimator = ExcessMapEstimator(0.04 * u.deg, selection_optional=[])
+            lima_maps = estimator.run(dataset_on_off)
+
+            significance_map = lima_maps["sqrt_ts"]
+            excess_map = lima_maps["npred_excess"]
+            print("### PLOTING ... #####")
+            print("saving in " + resPath+res_analysisName)
+            plotRingSigni(significance_map,excess_map,np.array([exclusion_mask.data[0]]),resPath+res_analysisName,res_analysisName)
+
+            plt.figure(figsize=(10, 10))
+            ax1 = plt.subplot(221, projection=significance_map.geom.wcs)
+            ax2 = plt.subplot(222, projection=excess_map.geom.wcs)
+
+            ax1.set_title("Significance map")
+            significance_map.plot(ax=ax1, add_cbar=True)
+
+            ax2.set_title("Excess map")
+            excess_map.plot(ax=ax2, add_cbar=True)
+            """
+        return render_template('main/hessana.html',form = form, graphJSON = {})
+
+    return render_template('main/hessana.html', form = form, graphJSON ={})
+    #except Exception as inst:
+    #    inst = str(inst)
+    #    return render_template('main/error.html',  inst =inst)
 
 @main.route("/tuto", methods=['GET'])
 def tuto():
