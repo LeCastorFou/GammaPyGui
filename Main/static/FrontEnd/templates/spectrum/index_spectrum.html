@@ -40,8 +40,10 @@
 
               <form method="POST" action="" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
+                <!--
                 <label class="text-label" style="color:white">Select analysis name/folder :</label>
                 <input type="text" id="tags" name="tags">
+                -->
 
                 <div class="input-container">
                   <div class="form-group">
@@ -237,44 +239,7 @@
 
                 </div>
 
-                <div class="form-group">
-                  {% if form.rmin.errors %}
-                    {{ form.rmin.label(class="is-invalid") }}
-                    {{ form.rmin(class="is-invalid")}}
-                    <div class="invalid-feedback">
-                      {% for error in form.rmin.errors %}
-                         <div class="invalid">
-                           <i class="fa fa-info-circle"></i> {{ error }}
-                         </div>
-                      {% endfor%}
-                    </div>
-                  {% else %}
-                    {{ form.rmin.label(class="text-label")  }}
-                    {{ form.rmin }}
-                  {% endif%}
-                </div>
-
-                <div class="form-group">
-                  {% if form.rmax.errors %}
-                    {{ form.rmax.label(class="is-invalid") }}
-                    {{ form.rmax(class="is-invalid")}}
-                    <div class="invalid-feedback">
-                      {% for error in form.rmax.errors %}
-                         <div class="invalid">
-                           <i class="fa fa-info-circle"></i> {{ error }}
-                         </div>
-                      {% endfor%}
-                    </div>
-                  {% else %}
-                    {{ form.rmax.label(class="text-label") }}
-                    {{ form.rmax }}
-                  {% endif%}
-                </div>
-                <br>
-                <p class="text-label"> Or choose a run list (.txt or .dat file containing a list of run)</p>
-                <input class="text-label" type=file name=file>
-                <br>
-                <br>
+              
 
                   {{ form.submit(class="sign-in button") }}
 

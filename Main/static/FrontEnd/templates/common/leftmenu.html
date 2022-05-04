@@ -2,11 +2,16 @@
     <h2 class="titular">MENU</h2>
     <ul class="menu-box-menu">
         <li>
-            <a class="menu-box-tab"  id = "hessana" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('main.hessana')}}"><span  class="icon  scnd-font-color"></span> H.E.S.S. analysis <div class="menu-box-number"></div></a>
+            <a class="menu-box-tab"  id = "hessana" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('main.hessana')}}"><span  class="icon  scnd-font-color"></span> H.E.S.S. analysis Set up<div class="menu-box-number"></div></a>
         </li>
-
+        <li>
+            <a class="menu-box-tab"  id = "hessana" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('main.hess2d')}}"><span  class="icon  scnd-font-color"></span> H.E.S.S. 2D maps <div class="menu-box-number"></div></a>
+        </li>
         <li>
             <a class="menu-box-tab" id = "Spectrum" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('spectrumbp.spectrum1D')}}"><span class="icon  scnd-font-color"></span>H.E.S.S. Spectrum<div class="menu-box-number"></div></a>
+        </li>
+        <li>
+            <a class="menu-box-tab" id = "Spectrum" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('main.hessdataq')}}"><span class="icon  scnd-font-color"></span>H.E.S.S. Data Quality<div class="menu-box-number"></div></a>
         </li>
         <li>
             <a class="menu-box-tab"  id = "ctasimu" style='color: #FFFFFF;text-decoration: none;' href="{{url_for('simubp.simu')}}"><span class="icon  scnd-font-color"></span>CTA Simulation <div class="menu-box-number"></div></a>

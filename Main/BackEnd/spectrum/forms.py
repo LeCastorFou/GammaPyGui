@@ -10,10 +10,9 @@ import datetime
 from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection
 
 class LaunchSpectrum(FlaskForm):
-    source =  SelectField('Choose a source', choices=[('','')] , validators=[])
+    source =  SelectField('Choose an ongoing analysis', choices=[('','')] , validators=[])
+    #source =  SelectField('Choose a source', choices=[('','')] , validators=[])
     #analysisName =  StringField('Name of spectrum :' , validators=[DataRequired()])
-    rmin = IntegerField('Run min  *', validators=[DataRequired()],default=1)
-    rmax = IntegerField('Run Max *', validators=[],default=200000)
     index = FloatField('Index : ', validators=[],default=2)
     index2 = FloatField('Second index : ', validators=[],default=2)
     amplitude = StringField('Amplitude (cm-2 s-1 TeV-1) example : 1e-12 ', validators=[],default='1e-12')

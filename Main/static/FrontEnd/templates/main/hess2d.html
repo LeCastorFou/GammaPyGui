@@ -1,0 +1,177 @@
+{% extends "common/layout.html" %}
+{% block content %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">  </script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
+
+        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"rel="stylesheet" type="text/css" />
+        <div class="row">
+
+
+        <!-- LEFT-CONTAINER -->
+        <div class="col">
+        <div class="left-container container">
+
+          <!-- MENU BOX (LEFT-CONTAINER) -->
+          {% include 'common/leftmenu.html' %}
+
+
+
+
+        </div>
+        </div>
+
+        <!-- MIDDLE-CONTAINER -->
+        <div class="col-6">
+
+          <div class="account block">
+              <h2 class="titular">SPECTRUM</h2>
+
+              <form method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+              
+
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.analysis.errors %}
+                      {{ form.analysis.label(class="is-invalid") }}
+                      {{ form.analysis(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.analysis.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.analysis.label(class="text-label")  }}
+                      {{ form.analysis(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+
+                <br>
+
+                  {{ form.submit(class="sign-in button") }}
+
+              </form>
+
+
+          </div>
+        </div>
+
+        <div class="col">
+          {% include 'common/rightmenu.html' %}
+        </div>
+
+        </div>
+
+<script>
+checkDependencies();
+
+$("select[id]").on('change', function() {
+
+  checkDependencies();
+});
+
+$("[id] > :radio").on('click', function() {
+
+  checkDependencies();
+});
+
+function checkDependencies() {
+
+  $("[data-dependent]").each(function() {
+
+    $dependent = $(this);
+
+    var data = $(this).data("dependent");
+
+    var keyCount = Object.keys(data).length;
+
+    var checkedCount = 0;
+
+    var setVisible = false;
+
+    var dependentValues = $.map(data, function(value, index) {
+      return value;
+    });
+
+    console.log("###########")
+    console.log(dependentValues)
+    console.log(data)
+    console.log(keyCount)
+    $("[id]").each(function() {
+
+      var hasRadioButtons = $(this).find(":radio").length;
+
+      var elementId = $(this).attr("id");
+
+      var elementValue;
+
+      if (hasRadioButtons) {
+
+        elementValue = $(this).find(":checked").val()
+
+      } else {
+
+        elementValue = $(this).val();
+      }
+
+      for (i = 0; i < keyCount; i++) {
+        var dependentId = Object.keys(data)[i];
+
+        //if multiple values for one key
+        var values = dependentValues[i].split(",");
+
+        if (dependentValues.length >1){
+          console.log(values)
+        }
+        for (j = 0; j < values.length; j++) {
+          var dependentValue = values[j];
+
+          if (elementId === dependentId) {
+
+            //check if value selected
+            if (elementValue === dependentValue) {
+
+              checkedCount += 1;
+
+              setVisible = true;
+
+              $dependent.show();
+
+              //found element, exit inner loop
+              break;
+
+            } else {
+
+              //hide if not previously set visible
+              if (!setVisible)
+                $dependent.hide();
+
+              //if all element dependencies found exit inner loop
+              if (keyCount === checkedCount)
+                break;
+
+            }
+          }
+
+        }
+      }
+
+    });
+
+  });
+
+}
+
+</script>
+
+<style>
+  [data-dependent] {
+  display: none;
+  }
+</style>
+{% endblock content %}

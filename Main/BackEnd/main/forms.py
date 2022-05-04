@@ -24,6 +24,14 @@ class StartHessAna(FlaskForm):
     rmax = IntegerField('Run Max *', validators=[],default=200000)
     submit = SubmitField('Launch analysis')
 
+class StartHess2D(FlaskForm):
+    analysis =  SelectField('Select an ongoing Analysis', choices=[('','')] , validators=[])
+    submit = SubmitField('Launch 2D analysis')
+
+class StartHessDataq(FlaskForm):
+    analysis =  SelectField('Select an ongoing Analysis', choices=[('','')] , validators=[])
+    submit = SubmitField('Launch Data quality')
+
 class SetUpConfig(FlaskForm):
     hessDataPath =  StringField('Path to H.E.S.S fits data folder :' , validators=[])
     ctaIrfsPath =  StringField('Path to CTA IRFS FITS (ex : $PATH/North_z20_50h/irf_file.fits ) :' , validators=[])
