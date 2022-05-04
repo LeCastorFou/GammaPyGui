@@ -19,7 +19,10 @@ class StartAnalysis(FlaskForm):
 
 class StartHessAna(FlaskForm):
     source =  SelectField('Choose a source', choices=[('','')] , validators=[])
-    analysisName =  StringField('Name of analysis :' , validators=[DataRequired()])
+    analysisName =  StringField('Name your analysis :' , validators=[DataRequired()])
+    ra_src = FloatField('Ra source  *', validators=[DataRequired()])
+    dec_src = FloatField('Dec source *', validators=[DataRequired()])
+    distance = FloatField('Maximun distance of run pointing *', validators=[DataRequired()],default=2)
     rmin = IntegerField('Run min  *', validators=[DataRequired()],default=1)
     rmax = IntegerField('Run Max *', validators=[],default=200000)
     submit = SubmitField('Launch analysis')

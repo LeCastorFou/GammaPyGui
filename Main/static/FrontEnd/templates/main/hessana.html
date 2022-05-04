@@ -7,8 +7,34 @@
         <div class="left-container container">
 
           <!-- MENU BOX (LEFT-CONTAINER) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
          {% include 'common/leftmenu.html' %}
 
+         <script type="text/javascript">
+            $(document).ready(function() {
+              $('#source').change(function(e){
+
+                var source = $(this).val();
+                console.log(source);
+                var fct = '/getCoordFromSource/'+source;
+                console.log(fct)
+
+                $.ajax({
+                  data : {
+                    source : $('#source').val(),
+                  },
+                  type : 'GET',
+                  url : fct,
+                  success: function(data) {
+                    console.log(data.matching_results);
+                    document.getElementById("ra_src").value = data.matching_results[0];
+                    document.getElementById("dec_src").value = data.matching_results[1];
+                  },
+                })
+                e.preventDefault();
+              });
+            });
+        </script>
 
 
         </div>
@@ -62,8 +88,66 @@
                 </div>
 
 
+
+
                 <div>
                 <p class="text-label"> Or select coordinates :</p>
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.ra_src.errors %}
+                      {{ form.ra_src.label(class="is-invalid") }}
+                      {{ form.ra_src(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.ra_src.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.ra_src.label(class="text-label")  }}
+                      {{ form.ra_src(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.dec_src.errors %}
+                      {{ form.dec_src.label(class="is-invalid") }}
+                      {{ form.dec_src(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.dec_src.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.dec_src.label(class="text-label")  }}
+                      {{ form.dec_src(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
+
+                <div class="input-container">
+                  <div class="form-group">
+                    {% if form.distance.errors %}
+                      {{ form.distance.label(class="is-invalid") }}
+                      {{ form.distance(class="is-invalid")}}
+                      <div class="invalid-feedback">
+                        {% for error in form.distance.errors %}
+                           <div class="invalid">
+                             <i class="fa fa-info-circle"></i> {{ error }}
+                           </div>
+                        {% endfor%}
+                      </div>
+                    {% else %}
+                      {{ form.distance.label(class="text-label")  }}
+                      {{ form.distance(class="select-label")  }}
+                    {% endif%}
+                  </div>
+                </div>
 
                 </div>
 

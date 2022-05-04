@@ -5,7 +5,7 @@ from Main.BackEnd.imports.astropySTD import *
 
 from Main import db, bcrypt, mail
 from Main.BackEnd.main.forms import  StartAnalysis, StartHessAna, SetUpConfig, StartHess2D, StartHessDataq
-from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection, plot_map_image, plot_theta_squared_table_custom, plotRingSigni
+from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection, plot_map_image, plot_theta_squared_table_custom, plotRingSigni, GetDistanceFromCoor
 
 from gammapy.data import DataStore
 from gammapy.maps import MapAxis, WcsGeom, Map,WcsNDMap
@@ -168,6 +168,9 @@ def hessana():
         table = Table.read(hessDataPath+'/obs-index.fits.gz', format='fits')
         obsindex = table.to_pandas()
         obsindex["OBJECT"] =  [ e.decode("utf-8")  for e in obsindex["OBJECT"] ]
+        print(obsindex.columns)
+        print(obsindex.head(10))
+
         object  = np.unique(list(obsindex["OBJECT"]))
         objects = [(e,e) for e in object]
         form.source.choices = objects
@@ -200,26 +203,29 @@ def hessana():
                 data_store = DataStore.from_dir(hessDataPath)
                 #data_store.obs_table[:][["OBS_ID", "DATE-OBS", "RA_PNT", "DEC_PNT", "OBJECT"]]
                 obsindex_all = obsindex
-                obsindex = obsindex[obsindex['OBJECT'] == form.source.data]
-                listrun = list(obsindex_all['OBS_ID'])
-                ra_obj = list(obsindex['RA_OBJ'])[0]
-                dec_obj = list(obsindex['DEC_OBJ'])[0]
-                print(obsindex_all.columns)
-                obsindex_all = obsindex_all[( abs(obsindex_all['RA_PNT']) < ra_obj + 10) & (abs(obsindex_all['RA_PNT']) > ra_obj - 10 )]
-                obsindex_all = obsindex_all[( abs(obsindex_all['DEC_PNT']) < dec_obj + 10) & (abs(obsindex_all['DEC_PNT']) > dec_obj - 10 )]
+                #obsindex['Distance'] =  obsindex.apply(lambda x : round(GetDistanceFromCoor(x['RA_PNT'], x['DEC_PNT'],float(lat),float(long))), axis=1)
+                #obsindex = obsindex[obsindex['OBJECT'] == form.source.data]
+                #listrun = list(obsindex_all['OBS_ID'])
+                ra_obj = form.ra_src.data
+                dec_obj = form.dec_src.data
+                print("### POSITION #####")
+                print(ra_obj)
+                print(dec_obj)
+                obsindex_all = obsindex_all[( abs(obsindex_all['RA_PNT']) < ra_obj + 3) & (abs(obsindex_all['RA_PNT']) > ra_obj - 3 )]
+                obsindex_all = obsindex_all[( abs(obsindex_all['DEC_PNT']) < dec_obj + 3) & (abs(obsindex_all['DEC_PNT']) > dec_obj - 3 )]
+                print(obsindex_all)
                 obsindex_all['Distance'] = [ math.sqrt((ra_obj-list(obsindex_all['RA_PNT'])[i])**2+(dec_obj-list(obsindex_all['DEC_PNT'])[i])**2 ) for i in range(len(obsindex_all))]
-                obsindex_all = obsindex_all[obsindex_all['Distance'] <= 2]
-                print(obsindex_all['Distance'])
+                obsindex_all = obsindex_all[obsindex_all['Distance'] <= form.distance.data]
+
                 listrun_select_circle = list(obsindex_all['OBS_ID'])
 
                 if isRunList:
                     print(runlist)
-                    listrun = [e  for e in listrun if e in runlist]
+                    listrun = [e  for e in listrun_select_circle if e in runlist]
                 else:
                     listrun = [e for e in listrun_select_circle if e >= form.rmin.data]
                     listrun = [e for e in listrun_select_circle if e <= form.rmax.data]
 
-                obs = data_store.obs(listrun[0])
                 res_analysisName_base = form.analysisName.data
                 res_analysisName = res_analysisName_base
                 i = 0
@@ -245,14 +251,9 @@ def hessana():
                 print(pd.DataFrame(listrun))
                 print(resPath+'run_list_'+res_analysisName+'.csv')
 
-                obs = data_store.get_observations(listrun)
 
                 ra_src = ra_obj
                 dec_src = dec_obj
-                print("### POSITION #####")
-                print(ra_src)
-                print(dec_src)
-                observations = data_store.get_observations(listrun)
 
                 energy_axis = MapAxis.from_energy_bounds(1.0, 10.0, 4, unit="TeV")
 
@@ -268,7 +269,7 @@ def hessana():
                 # Reduced IRFs are defined in true energy (i.e. not measured energy).
                 energy_axis_true = MapAxis.from_energy_bounds(0.5, 20, 10, unit="TeV", name="energy_true")
 
-                stacked = MapDataset.create(geom=geom, energy_axis_true=energy_axis_true, name="crab-stacked")
+                stacked = MapDataset.create(geom=geom, energy_axis_true=energy_axis_true, name="analyis-stacked")
                 offset_max = 2.5 * u.deg
                 maker = MapDatasetMaker()
                 maker_safe_mask = SafeMaskMaker(methods=["offset-max", "aeff-max"], offset_max=offset_max)
@@ -516,6 +517,32 @@ def tuto():
     return render_template('main/tutorial.html')
 
 
+@main.route("/getCoordFromSource/<string:source>", methods=['GET','POST'])
+def getCoordFromSource(source):
+    print('IN getCoordFromSource')
+    configPath = os.getcwd() + "/Main/static/configFile/"
+    resPath = os.getcwd() + "/Main/static/results/"
+    confExist = os.path.isfile(configPath+"config.csv")
+    fileConfig = configPath+"config.csv"
+    hessDataPath = ""
+    pathConf = False
+
+    sourcesearch=source
+    try:
+        df_config = pd.read_csv(fileConfig)
+        hessDataPath = list(df_config['hessDataPath'])[0]
+        pathConf = True
+    except:
+        print("No HESS DATA PATH defined")
+
+    table = Table.read(hessDataPath+'/obs-index.fits.gz', format='fits')
+    obsindex = table.to_pandas()
+    obsindex["OBJECT"] =  [ e.decode("utf-8")  for e in obsindex["OBJECT"] ]
+    res = obsindex[obsindex['OBJECT'] ==sourcesearch ][:1].to_dict('records')
+    res = [ res[0]['RA_OBJ'],res[0]['DEC_OBJ']]
+    return jsonify(matching_results=res)
+
+
 @main.route("/results", methods=['GET'])
 def results():
     try:
@@ -525,6 +552,7 @@ def results():
     except Exception as inst:
         inst = str(inst)
         return render_template('main/error.html',  inst =inst)
+
 
 @main.route("/resultsplots/<string:folder>", methods=['GET'])
 def resultsplots(folder):
