@@ -15,7 +15,7 @@ class StartAnalysis(FlaskForm):
     rmin = IntegerField('Run min  *', validators=[DataRequired()],default=1)
     rmax = IntegerField('Run Max *', validators=[],default=200000)
     obs = SelectField('Observatory : ', choices=[('H.E.S.S.','H.E.S.S.'),('CTA','CTA'),('FERMI','FERMI')] , validators=[DataRequired()])
-    submit = SubmitField('Launch analysis')
+    submit = SubmitField('Prepare data analysis')
 
 class StartHessAna(FlaskForm):
     source =  SelectField('Choose a source', choices=[('','')] , validators=[])
@@ -25,7 +25,7 @@ class StartHessAna(FlaskForm):
     distance = FloatField('Maximun distance of run pointing *', validators=[DataRequired()],default=2)
     rmin = IntegerField('Run min  *', validators=[DataRequired()],default=1)
     rmax = IntegerField('Run Max *', validators=[],default=200000)
-    submit = SubmitField('Launch analysis')
+    submit = SubmitField('Setup analysis')
 
 class StartHess2D(FlaskForm):
     analysis =  SelectField('Select an ongoing Analysis', choices=[('','')] , validators=[])
