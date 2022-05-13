@@ -255,24 +255,27 @@ def hessana():
                 ra_src = ra_obj
                 dec_src = dec_obj
 
-                energy_axis = MapAxis.from_energy_bounds(1.0, 10.0, 4, unit="TeV")
+                energy_axis = MapAxis.from_energy_bounds(form.ana_emin.data, form.ana_emax.data, 20, unit="TeV")
 
                 geom = WcsGeom.create(
                     skydir=(ra_src, dec_src),
                     binsz=0.02,
-                    width=(2, 2),
+                    width=(form.map_size_X.data, form.map_size_Y.data),
                     frame="icrs",
                     proj="CAR",
                     axes=[energy_axis],
                 )
 
                 # Reduced IRFs are defined in true energy (i.e. not measured energy).
-                energy_axis_true = MapAxis.from_energy_bounds(0.5, 20, 10, unit="TeV", name="energy_true")
+                energy_axis_true = MapAxis.from_energy_bounds(form.ana_emin.data*0.85, form.ana_emax.data*1.15, 30, unit="TeV", name="energy_true")
 
                 stacked = MapDataset.create(geom=geom, energy_axis_true=energy_axis_true, name="analyis-stacked")
-                offset_max = 2.5 * u.deg
+                offset_max = form.max_evt_offset.data * u.deg
+
                 maker = MapDatasetMaker()
-                maker_safe_mask = SafeMaskMaker(methods=["offset-max", "aeff-max"], offset_max=offset_max)
+                maker_safe_mask = SafeMaskMaker(methods=["offset-max", "aeff-max"], offset_max=offset_max) #Possible to apply the aeff mask later?
+
+                # TODO : IMPLEMENT REGIONS HANDLING
                 circle = CircleSkyRegion(center=SkyCoord(str(ra_src)+" deg", str(dec_src)+" deg"), radius=0.2 * u.deg)
                 exclusion_mask = ~geom.region_mask(regions=[circle])
                 maker_fov = FoVBackgroundMaker(method="fit", exclusion_mask=exclusion_mask)
@@ -446,19 +449,18 @@ def hess2d():
         listrun = list(listrun_csv[listrun_csv.columns[1]])
 
         stacked = MapDataset.read(resPath+res_analysisName+"/stacked-dataset.fits.gz")
-        stacked.counts.sum_over_axes().smooth(0.05 * u.deg).plot(stretch="sqrt", add_cbar=True)
+        #stacked.counts.sum_over_axes().smooth(0.05 * u.deg).plot(stretch="sqrt", add_cbar=True)
         print(stacked.info_dict())
         print(stacked.geoms['geom'].center_skydir.ra.degree)
         ra_src = stacked.geoms['geom'].center_skydir.ra.degree
         dec_src = stacked.geoms['geom'].center_skydir.dec.degree
         print(stacked.to_dict())
-        # Define map geometry for binned simulation
-        energy_reco = MapAxis.from_edges(np.logspace(-1.0, 1.0, 10), unit="TeV", name="energy", interp="log")
-        geom = WcsGeom.create(skydir=(ra_src, dec_src),binsz=0.02,width=(2, 2),frame="icrs",axes=[energy_reco])
 
-        # It is usually useful to have a separate binning for the true energy axis
-        energy_true = MapAxis.from_edges(np.logspace(-1.5, 1.5, 30), unit="TeV", name="energy_true", interp="log")
-        energy = MapAxis.from_edges(np.logspace(-1.5, 1.5, 30), unit="TeV", name="energy", interp="log")
+        # Define map geometry
+        #energy_reco = MapAxis.from_edges(np.logspace(-1.0, 1.0, 10), unit="TeV", name="energy", interp="log")
+        #energy_true = MapAxis.from_edges(np.logspace(-1.5, 1.5, 30), unit="TeV", name="energy_true", interp="log")
+        energy =      MapAxis.from_edges(np.logspace(-1.0, 1.0, 30), unit="TeV", name="energy", interp="log") #Is this actually used???
+        geom = WcsGeom.create(skydir=(ra_src, dec_src),binsz=0.02,width=stacked.geoms['geom'].width,frame="icrs",axes=[energy])
 
         #geom = datasets[0].geoms['geom']
         energy_axis = energy
@@ -466,23 +468,24 @@ def hess2d():
 
         # Make the exclusion mask
         pointing = SkyCoord(ra_src, dec_src, unit="deg", frame="icrs")
-        regions = CircleSkyRegion(center=SkyCoord(ra_src, dec_src, unit="deg"), radius=0.5 * u.deg)
+        regions = CircleSkyRegion(center=SkyCoord(ra_src, dec_src, unit="deg"), radius=0.5 *u.deg)
         exclusion_mask = ~geom_image.region_mask([regions])
         exclusion_mask.geom
 
         print("### Ring background ... #####")
-        ring_maker = RingBackgroundMaker(r_in="0.5 deg", width="0.3 deg")
+        ring_maker = RingBackgroundMaker(r_in=form.ring_inner_radius.data * u.deg, width=form.ring_width.data *u.deg)
 
-        energy_axis_true = energy
+        #energy_axis_true = energy
         dataset_on_off = ring_maker.run(stacked.to_image())
         stacked.to_image().info_dict()
-
-        estimator = ExcessMapEstimator(0.04 * u.deg, selection_optional=[])
+        print("=>",form.os_radius.data)
+        estimator = ExcessMapEstimator(form.os_radius.data *u.deg, selection_optional=[])
         lima_maps = estimator.run(dataset_on_off)
 
         significance_map = lima_maps["sqrt_ts"]
         print(significance_map)
         excess_map = lima_maps["npred_excess"]
+        masked_significance_map = exclusion_mask * significance_map
         print("### PLOTING ... #####")
 
         print("saving in " + resPath+res_analysisName)
@@ -491,14 +494,16 @@ def hess2d():
         plt.figure(figsize=(10, 10))
         ax1 = plt.subplot(221, projection=significance_map.geom.wcs)
         ax2 = plt.subplot(222, projection=excess_map.geom.wcs)
-
+        ax3 = plt.subplot(223, projection=masked_significance_map.geom.wcs)
         ax1.set_title("Significance map")
         significance_map.plot(ax=ax1, add_cbar=True)
         ax2.set_title("Excess map")
         excess_map.plot(ax=ax2, add_cbar=True)
-        ax2.get_figure().savefig(resPath+res_analysisName +'/2Dmaps.png')
+        ax3.set_title("Masked significance map")
+        masked_significance_map.plot(ax=ax3, add_cbar=True)
+        ax3 .get_figure().savefig(resPath+res_analysisName +'/2Dmaps.png')
 
-        # Theta 2 PLot
+        # Theta 2 Plot
         position = SkyCoord(ra=ra_src, dec=dec_src, unit="deg", frame="icrs")
         theta2_axis = MapAxis.from_bounds(0, 0.2, nbin=20, interp="lin", unit="deg2")
 

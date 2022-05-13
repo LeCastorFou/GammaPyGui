@@ -50,6 +50,61 @@
                   </div>
                 </div>
 
+                <br>
+                <hr>
+
+                <h2 class="titular">Maps Parameters</h2>
+
+                <div class="form-group">
+                  {% if form.ring_inner_radius.errors %}
+                    {{ form.ring_inner_radius.label(class="is-invalid") }}
+                    {{ form.ring_inner_radius(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.ring_inner_radius.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.ring_inner_radius.label(class="text-label") }}
+                    {{ form.ring_inner_radius }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.ring_width.errors %}
+                    {{ form.ring_width.label(class="is-invalid") }}
+                    {{ form.ring_width(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.ring_width.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.ring_width.label(class="text-label") }}
+                    {{ form.ring_width }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.os_radius.errors %}
+                    {{ form.os_radius.label(class="is-invalid") }}
+                    {{ form.os_radius(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.os_radius.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.os_radius.label(class="text-label") }}
+                    {{ form.os_radius }}
+                  {% endif%}
+                </div>
 
                 <br>
 

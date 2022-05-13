@@ -44,7 +44,7 @@
         <div class="col-6">
         <div class="rescontainer">
           <div class="account block">
-              <h2 class="titular">Look for a target</h2>
+              <h2 class="titular">Target selection</h2>
 
               <form method="POST" action="" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
@@ -130,6 +130,9 @@
                   </div>
                 </div>
 
+                <hr>
+                <h2 class="titular">Run selection</h2>
+
                 <div class="input-container">
                   <div class="form-group">
                     {% if form.distance.errors %}
@@ -188,10 +191,99 @@
                 <p class="text-label"> Or choose a run list (.txt or .dat file containing a list of run)</p>
                 <input class="text-label" type=file name=file>
                 <br>
+
+                <hr>
+                <h2 class="titular">Analysis parameters</h2>
+
+                <div class="form-group">
+                  {% if form.max_evt_offset.errors %}
+                    {{ form.max_evt_offset.label(class="is-invalid") }}
+                    {{ form.max_evt_offset(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.max_evt_offset.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.max_evt_offset.label(class="text-label") }}
+                    {{ form.max_evt_offset }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.map_size_X.errors %}
+                    {{ form.map_size_X.label(class="is-invalid") }}
+                    {{ form.map_size_X(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.map_size_X.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.map_size_X.label(class="text-label") }}
+                    {{ form.map_size_X }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.map_size_Y.errors %}
+                    {{ form.map_size_Y.label(class="is-invalid") }}
+                    {{ form.map_size_Y(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.map_size_Y.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.map_size_Y.label(class="text-label") }}
+                    {{ form.map_size_Y }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.ana_emin.errors %}
+                    {{ form.ana_emin.label(class="is-invalid") }}
+                    {{ form.ana_emin(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.ana_emin.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.ana_emin.label(class="text-label") }}
+                    {{ form.ana_emin }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.ana_emax.errors %}
+                    {{ form.ana_emax.label(class="is-invalid") }}
+                    {{ form.ana_emax(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.ana_emax.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.ana_emax.label(class="text-label") }}
+                    {{ form.ana_emax }}
+                  {% endif%}
+                </div>
+
                 <br>
-
+                <hr>
                   {{ form.submit(class="sign-in button") }}
-
+                <br>
               </form>
 
 
