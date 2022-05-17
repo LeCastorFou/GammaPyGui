@@ -16,7 +16,6 @@ import ast
 import arrow
 import requests
 import urllib3
-import certifi
 import xml.etree.ElementTree as ET
 import datetime
 import re
