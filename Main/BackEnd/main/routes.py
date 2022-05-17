@@ -459,7 +459,7 @@ def hess2d():
         # Define map geometry
         #energy_reco = MapAxis.from_edges(np.logspace(-1.0, 1.0, 10), unit="TeV", name="energy", interp="log")
         #energy_true = MapAxis.from_edges(np.logspace(-1.5, 1.5, 30), unit="TeV", name="energy_true", interp="log")
-        energy =      MapAxis.from_edges(np.logspace(-1.0, 1.0, 30), unit="TeV", name="energy", interp="log") #Is this actually used???
+        energy = stacked.geoms['geom'].axes['energy']#     MapAxis.from_edges(np.logspace(-1.0, 0.0, 30), unit="TeV", name="energy", interp="log") #Is this actually used???
         geom = WcsGeom.create(skydir=(ra_src, dec_src),binsz=0.02,width=stacked.geoms['geom'].width,frame="icrs",axes=[energy])
 
         #geom = datasets[0].geoms['geom']
