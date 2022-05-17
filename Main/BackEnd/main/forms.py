@@ -15,7 +15,7 @@ class StartAnalysis(FlaskForm):
     rmin = IntegerField('Run min  *', validators=[DataRequired()],default=1)
     rmax = IntegerField('Run Max *', validators=[],default=200000)
     obs = SelectField('Observatory : ', choices=[('H.E.S.S.','H.E.S.S.'),('CTA','CTA'),('FERMI','FERMI')] , validators=[DataRequired()])
-    submit = SubmitField('Launch analysis')
+    submit = SubmitField('Prepare data analysis')
 
 class StartHessAna(FlaskForm):
     source =  SelectField('Choose a source', choices=[('','')] , validators=[])
@@ -25,10 +25,19 @@ class StartHessAna(FlaskForm):
     distance = FloatField('Maximun distance of run pointing *', validators=[DataRequired()],default=2)
     rmin = IntegerField('Run min  *', validators=[DataRequired()],default=1)
     rmax = IntegerField('Run Max *', validators=[],default=200000)
-    submit = SubmitField('Launch analysis')
+    max_evt_offset = FloatField('Maximum event offset *', validators=[DataRequired()],default=2)
+    map_size_X = FloatField('Map size X *', validators=[DataRequired()],default=2)
+    map_size_Y = FloatField('Map size Y *', validators=[DataRequired()],default=2)
+    ana_emin = FloatField('Energy min *', validators=[DataRequired()],default=0.1)
+    ana_emax = FloatField('Energy max *', validators=[DataRequired()],default=10.0)
+
+    submit = SubmitField('Prepare data analysis')
 
 class StartHess2D(FlaskForm):
     analysis =  SelectField('Select an ongoing Analysis', choices=[('','')] , validators=[])
+    ring_inner_radius = FloatField('Ring inner radius *', validators=[DataRequired()],default=0.5)
+    ring_width = FloatField('Ring width *', validators=[DataRequired()],default=0.3)
+    os_radius = FloatField('Oversampling radius *', validators=[DataRequired()],default=0.05)
     submit = SubmitField('Launch 2D analysis')
 
 class StartHessDataq(FlaskForm):
