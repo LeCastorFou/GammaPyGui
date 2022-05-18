@@ -273,7 +273,10 @@ def hessana():
                 offset_max = form.max_evt_offset.data * u.deg
 
                 maker = MapDatasetMaker()
-                maker_safe_mask = SafeMaskMaker(methods=["offset-max", "aeff-max"], offset_max=offset_max) #Possible to apply the aeff mask later?
+                if form.apply_aeff_mask.data:
+                    maker_safe_mask = SafeMaskMaker(methods=["offset-max", "aeff-max"], offset_max=offset_max, aeff_percent=form.apply_aeff_mask_value.data) #Possible to apply the aeff mask later?
+                else:
+                    maker_safe_mask = SafeMaskMaker(methods=["offset-max"], offset_max=offset_max)
 
                 # TODO : IMPLEMENT REGIONS HANDLING
                 circle = CircleSkyRegion(center=SkyCoord(str(ra_src)+" deg", str(dec_src)+" deg"), radius=0.2 * u.deg)

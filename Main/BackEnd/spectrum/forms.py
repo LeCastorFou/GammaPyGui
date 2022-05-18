@@ -11,6 +11,15 @@ from Main.BackEnd.main.utils import  Get_MongoDB, load_DB_collection
 
 class LaunchSpectrum(FlaskForm):
     source =  SelectField('Choose an ongoing analysis', choices=[('','')] , validators=[])
+
+    on_size = FloatField('Integration region size : ', validators=[DataRequired()],default=0.1)
+    spec_emin = FloatField('Spec Emin : ', validators=[DataRequired()],default=0.1)
+    spec_emax = FloatField('Spec Emax : ', validators=[DataRequired()],default=10)
+    spec_ebins=IntegerField('N Ebins per decade : ', validators=[DataRequired()],default=10)
+    containment_bool=BooleanField('Apply containment correction : ', validators=[],default=1)
+    aeff_mask_value = FloatField('AEff mask percent (for spectrum) *', validators=[DataRequired()],default=10.0)
+    compute_points=BooleanField('Compute flux points :  ', validators=[],default=0)
+
     #source =  SelectField('Choose a source', choices=[('','')] , validators=[])
     #analysisName =  StringField('Name of spectrum :' , validators=[DataRequired()])
     index = FloatField('Index : ', validators=[],default=2)

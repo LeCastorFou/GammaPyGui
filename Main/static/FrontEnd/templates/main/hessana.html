@@ -280,6 +280,40 @@
                   {% endif%}
                 </div>
 
+                <div class="form-group">
+                  {% if form.apply_aeff_mask.errors %}
+                    {{ form.apply_aeff_mask.label(class="is-invalid") }}
+                    {{ form.apply_aeff_mask(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.apply_aeff_mask.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.apply_aeff_mask.label(class="text-label") }}
+                    {{ form.apply_aeff_mask }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.apply_aeff_mask_value.errors %}
+                    {{ form.apply_aeff_mask_value.label(class="is-invalid") }}
+                    {{ form.apply_aeff_mask_value(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.apply_aeff_mask_value.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.apply_aeff_mask_value.label(class="text-label") }}
+                    {{ form.apply_aeff_mask_value }}
+                  {% endif%}
+                </div>
+
                 <br>
                 <hr>
                   {{ form.submit(class="sign-in button") }}

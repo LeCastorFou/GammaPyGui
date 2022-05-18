@@ -64,6 +64,124 @@
                   </div>
                 </div>
 
+                <div class="form-group">
+                  {% if form.on_size.errors %}
+                    {{ form.on_size.label(class="is-invalid") }}
+                    {{ form.on_size(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.on_size.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.on_size.label(class="text-label") }}
+                    {{ form.on_size }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.spec_emin.errors %}
+                    {{ form.spec_emin.label(class="is-invalid") }}
+                    {{ form.spec_emin(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.spec_emin.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.spec_emin.label(class="text-label") }}
+                    {{ form.spec_emin }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.spec_emax.errors %}
+                    {{ form.spec_emax.label(class="is-invalid") }}
+                    {{ form.spec_emax(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.spec_emax.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.spec_emax.label(class="text-label") }}
+                    {{ form.spec_emax }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.spec_ebins.errors %}
+                    {{ form.spec_ebins.label(class="is-invalid") }}
+                    {{ form.spec_ebins(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.spec_ebins.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.spec_ebins.label(class="text-label") }}
+                    {{ form.spec_ebins }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.containment_bool.errors %}
+                    {{ form.containment_bool.label(class="is-invalid") }}
+                    {{ form.containment_bool(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.containment_bool.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.containment_bool.label(class="text-label") }}
+                    {{ form.containment_bool }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.aeff_mask_value.errors %}
+                    {{ form.aeff_mask_value.label(class="is-invalid") }}
+                    {{ form.aeff_mask_value(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.aeff_mask_value.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.aeff_mask_value.label(class="text-label") }}
+                    {{ form.aeff_mask_value }}
+                  {% endif%}
+                </div>
+
+                <div class="form-group">
+                  {% if form.compute_points.errors %}
+                    {{ form.compute_points.label(class="is-invalid") }}
+                    {{ form.compute_points(class="is-invalid")}}
+                    <div class="invalid-feedback">
+                      {% for error in form.compute_points.errors %}
+                         <div class="invalid">
+                           <i class="fa fa-info-circle"></i> {{ error }}
+                         </div>
+                      {% endfor%}
+                    </div>
+                  {% else %}
+                    {{ form.compute_points.label(class="text-label") }}
+                    {{ form.compute_points }}
+                  {% endif%}
+                </div>
 
                 <div class="input-container">
                 <div class="form-group">
@@ -239,7 +357,7 @@
 
                 </div>
 
-              
+
 
                   {{ form.submit(class="sign-in button") }}
 

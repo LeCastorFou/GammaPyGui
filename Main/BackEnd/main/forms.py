@@ -30,6 +30,8 @@ class StartHessAna(FlaskForm):
     map_size_Y = FloatField('Map size Y *', validators=[DataRequired()],default=2)
     ana_emin = FloatField('Energy min *', validators=[DataRequired()],default=0.1)
     ana_emax = FloatField('Energy max *', validators=[DataRequired()],default=10.0)
+    apply_aeff_mask = BooleanField('Apply AEff mask (for 2D maps) *', validators=[],default=0)
+    apply_aeff_mask_value = FloatField('AEff mask percent (for 2D maps) *', validators=[DataRequired()],default=10.0)
 
     submit = SubmitField('Prepare data analysis')
 
