@@ -22,7 +22,6 @@ from Main.PlotCreator import PlotCreator
 
 main = Blueprint('main',__name__)
 
-webSumAddress = "http://127.0.0.1:5050/"
 
 @main.route("/home", methods=['GET', 'POST'])
 def home():
@@ -105,6 +104,8 @@ def account():
         if form.validate_on_submit():
             hessDataPath_new = form.hessDataPath.data
             ctaIRFSpath_new = form.ctaIrfsPath.data
+            excludedRegionHESS = form.excludedRegionHESS.data
+            linkWebSummary = form.linkWebSummary.data
 
             if hessDataPath_new[-1] != '/':
                 hessDataPath_new = hessDataPath_new + '/'
@@ -113,7 +114,21 @@ def account():
                     ctaIRFSpath_new = ctaIRFSpath_new + '/'
             else:
                 ctaIRFSpath_new = ''
-            df_config = pd.DataFrame.from_dict({'hessDataPath':[hessDataPath_new],'ctaIRFSpath':[ctaIRFSpath_new]})
+
+            if excludedRegionHESS != '' and excludedRegionHESS != None:
+                if excludedRegionHESS[-1] != '/':
+                    excludedRegionHESS = excludedRegionHESS + '/'
+            else:
+                excludedRegionHESS = ''
+
+            if linkWebSummary != '' and linkWebSummary != None:
+                if linkWebSummary[-1] != '/':
+                    linkWebSummary = linkWebSummary + '/'
+            else:
+                linkWebSummary = ''
+
+            df_config = pd.DataFrame.from_dict({'hessDataPath':[hessDataPath_new],'ctaIRFSpath':[ctaIRFSpath_new]
+            ,'excludedRegionHESS':[excludedRegionHESS] ,'linkWebSummary':[linkWebSummary] })
             df_config.to_csv(fileConfig)
 
         elif request.method ==  'GET':
@@ -137,6 +152,16 @@ def account():
                     try:
                         ctaIRFSpath = list(df_config['ctaIRFSpath'])[0]
                         form.ctaIrfsPath.data =  ctaIRFSpath
+                    except:
+                        print("No CTA IRFS PATH defined")
+                    try:
+                        excludedRegionHESS = list(df_config['excludedRegionHESS'])[0]
+                        form.excludedRegionHESS.data =  excludedRegionHESS
+                    except:
+                        print("No CTA IRFS PATH defined")
+                    try:
+                        linkWebSummary = list(df_config['linkWebSummary'])[0]
+                        form.linkWebSummary.data =  linkWebSummary
                     except:
                         print("No CTA IRFS PATH defined")
 
@@ -320,7 +345,21 @@ def hessdataq():
     configPath = os.getcwd() + "/Main/static/configFile/"
     resPath = os.getcwd() + "/Main/static/results/"
     listresfiles = os.listdir(resPath)
-
+    confExist = os.path.isfile(configPath+"config.csv")
+    fileConfig = configPath+"config.csv"
+    if not confExist:
+        open(fileConfig, 'a').close()
+        webSumAddress = ''
+    else:
+        df_config = pd.read_csv(fileConfig)
+        print(df_config)
+        try:
+            df_config = pd.read_csv(fileConfig)
+            webSumAddress = list(df_config['linkWebSummary'])[0]
+        except:
+            df_config = pd.DataFrame.from_dict({})
+            print("No config file or empty ")
+            webSumAddress = ''
     form = StartHessDataq()
 
     listresfilesdict = []
@@ -329,7 +368,7 @@ def hessdataq():
     form.analysis.choices = listresfilesdict
 
     isRunList = True
-
+    print(webSumAddress)
     if form.validate_on_submit():
         res_analysisName = form.analysis.data
         try:

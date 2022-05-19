@@ -50,6 +50,40 @@
                    {% endif%}
                  </div>
 
+                 <div class="form-group">
+                   {% if form.excludedRegionHESS.errors %}
+                     {{ form.excludedRegionHESS.label(class="is-invalid") }}
+                     {{ form.excludedRegionHESS(class="is-invalid")}}
+                     <div class="invalid-feedback">
+                       {% for error in form.excludedRegionHESS.errors %}
+                          <div class="invalid">
+                            <i class="fa fa-info-circle"></i> {{ error }}
+                          </div>
+                       {% endfor%}
+                     </div>
+                   {% else %}
+                     {{ form.excludedRegionHESS.label(class="text-label")  }}
+                     {{ form.excludedRegionHESS(class="select-label")  }}
+                   {% endif%}
+                 </div>
+
+                 <div class="form-group">
+                   {% if form.linkWebSummary.errors %}
+                     {{ form.linkWebSummary.label(class="is-invalid") }}
+                     {{ form.linkWebSummary(class="is-invalid")}}
+                     <div class="invalid-feedback">
+                       {% for error in form.linkWebSummary.errors %}
+                          <div class="invalid">
+                            <i class="fa fa-info-circle"></i> {{ error }}
+                          </div>
+                       {% endfor%}
+                     </div>
+                   {% else %}
+                     {{ form.linkWebSummary.label(class="text-label")  }}
+                     {{ form.linkWebSummary(class="select-label")  }}
+                   {% endif%}
+                 </div>
+
                </div>
 
                  {{ form.submit(class="sign-in button") }}
