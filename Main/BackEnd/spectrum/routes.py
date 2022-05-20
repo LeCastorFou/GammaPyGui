@@ -112,12 +112,22 @@ def spectrum1D():
                 radius=0.0 * u.deg,
             )
 
+            excluded_regions_list = pd.read_csv(resPath+res_analysisName+'/excludedregions_'+res_analysisName+'.csv')
+            print("EXCLUDED REGIONS")
+            print(excluded_regions_list)
+            pointing = SkyCoord(ra_src, dec_src, unit="deg", frame="icrs")
+            exclusion_region = [CircleSkyRegion(center=SkyCoord(ra_src, dec_src, unit="deg"), radius=0.3 *u.deg)]
+            if len(excluded_regions_list) >0:
+                for i in range(len(excluded_regions_list)):
+                    exclusion_region = exclusion_region + [CircleSkyRegion(center=SkyCoord(str(list(excluded_regions_list['ra'])[0])+" deg", str(list(excluded_regions_list['dec'])[0])+" deg"), radius=list(excluded_regions_list['radius'])[0] * u.deg)]
+
+
             skydir = target_position.galactic
             geom = WcsGeom.create(
                 npix=(150, 150), binsz=0.05, skydir=skydir, proj="TAN", frame="icrs"
             )
 
-            exclusion_mask = ~geom.region_mask([exclusion_region])
+            exclusion_mask = ~geom.region_mask(exclusion_region)
             exclusion_mask.plot()
 
             energy = stacked.geoms['geom'].axes['energy']#     MapAxis.from_edges(np.logspace(-1.0, 0.0, 30), unit="TeV", name="energy", interp="log") #Is this actually used???
