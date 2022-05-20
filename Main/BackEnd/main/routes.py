@@ -116,8 +116,7 @@ def account():
                 ctaIRFSpath_new = ''
 
             if excludedRegionHESS != '' and excludedRegionHESS != None:
-                if excludedRegionHESS[-1] != '/':
-                    excludedRegionHESS = excludedRegionHESS + '/'
+                excludedRegionHESS = excludedRegionHESS
             else:
                 excludedRegionHESS = ''
 
@@ -190,11 +189,15 @@ def hessana():
         except:
             print("No HESS DATA PATH defined")
 
+        try:
+            df_config = pd.read_csv(fileConfig)
+            excludedRegionHESS = list(df_config['excludedRegionHESS'])[0]
+        except:
+            print("No HESS excluded regions")
+
         table = Table.read(hessDataPath+'/obs-index.fits.gz', format='fits')
         obsindex = table.to_pandas()
         obsindex["OBJECT"] =  [ e.decode("utf-8")  for e in obsindex["OBJECT"] ]
-        print(obsindex.columns)
-        print(obsindex.head(10))
 
         object  = np.unique(list(obsindex["OBJECT"]))
         objects = [(e,e) for e in object]
@@ -236,9 +239,8 @@ def hessana():
                 print("### POSITION #####")
                 print(ra_obj)
                 print(dec_obj)
-                obsindex_all = obsindex_all[( abs(obsindex_all['RA_PNT']) < ra_obj + 3) & (abs(obsindex_all['RA_PNT']) > ra_obj - 3 )]
-                obsindex_all = obsindex_all[( abs(obsindex_all['DEC_PNT']) < dec_obj + 3) & (abs(obsindex_all['DEC_PNT']) > dec_obj - 3 )]
-                print(obsindex_all)
+                obsindex_all = obsindex_all[( abs(obsindex_all['RA_PNT']) < abs(ra_obj) + 3) & (abs(obsindex_all['RA_PNT']) > abs(ra_obj) - 3 )]
+                obsindex_all = obsindex_all[( abs(obsindex_all['DEC_PNT']) < abs(dec_obj) + 3) & (abs(obsindex_all['DEC_PNT']) > abs(dec_obj) - 3 )]
                 obsindex_all['Distance'] = [ math.sqrt((ra_obj-list(obsindex_all['RA_PNT'])[i])**2+(dec_obj-list(obsindex_all['DEC_PNT'])[i])**2 ) for i in range(len(obsindex_all))]
                 obsindex_all = obsindex_all[obsindex_all['Distance'] <= form.distance.data]
 
@@ -271,12 +273,7 @@ def hessana():
                         print("RUN : "+str(e)+" ERROR")
                         runs_notexist = runs_notexist + [e]
                 listrun = [run for run in list_run_all if run not in runs_notexist]
-
-
-                print(pd.DataFrame(listrun))
-                print(resPath+'run_list_'+res_analysisName+'.csv')
-
-
+                print(listrun)
                 ra_src = ra_obj
                 dec_src = dec_obj
 
@@ -301,8 +298,23 @@ def hessana():
                 maker_safe_mask = SafeMaskMaker(methods=["offset-max", "aeff-max"], offset_max=offset_max) #Possible to apply the aeff mask later?
 
                 # TODO : IMPLEMENT REGIONS HANDLING
-                circle = CircleSkyRegion(center=SkyCoord(str(ra_src)+" deg", str(dec_src)+" deg"), radius=0.2 * u.deg)
-                exclusion_mask = ~geom.region_mask(regions=[circle])
+                excluded_regions_list = pd.read_csv(excludedRegionHESS)
+                excluded_regions_list['Distance'] = [ math.sqrt((ra_obj-list(excluded_regions_list['ra'])[i])**2+(dec_obj-list(excluded_regions_list['dec'])[i])**2 ) for i in range(len(excluded_regions_list))]
+                search_size = np.max ([form.map_size_X.data,form.map_size_Y.data])
+                excluded_regions_list =  excluded_regions_list[excluded_regions_list['Distance'] < search_size]
+                if len(excluded_regions_list) > 0:
+                    excluded_regions_list.to_csv(resPath+res_analysisName+'/excludedregions_'+res_analysisName+'.csv')
+
+                print("### POSITION #####")
+                print(ra_obj)
+                print(dec_obj)
+                print(search_size)
+                print(excluded_regions_list)
+
+                all_circle_regions = []
+                for i in range(len(excluded_regions_list)):
+                    all_circle_regions = all_circle_regions + [CircleSkyRegion(center=SkyCoord(str(list(excluded_regions_list['ra'])[0])+" deg", str(list(excluded_regions_list['dec'])[0])+" deg"), radius=list(excluded_regions_list['radius'])[0] * u.deg)]
+                exclusion_mask = ~geom.region_mask(regions=all_circle_regions)
                 maker_fov = FoVBackgroundMaker(method="fit", exclusion_mask=exclusion_mask)
 
                 observations = data_store.get_observations(listrun)
@@ -332,13 +344,13 @@ def hessana():
                     f.write(str(e)+'\n')
                 f.close()
 
+
             return render_template('main/hessana.html',form = form, graphJSON = {})
 
         return render_template('main/hessana.html', form = form, graphJSON ={})
     except Exception as inst:
         inst = str(inst)
         return render_template('main/error.html',  inst =inst)
-
 
 @main.route("/hessdataq", methods=['GET', 'POST'])
 def hessdataq():
@@ -449,8 +461,6 @@ def hessdataq():
 
     return render_template('main/hessdataq.html', form = form, graphJSON ={})
 
-
-
 @main.route("/hess2d", methods=['GET', 'POST'])
 def hess2d():
     configPath = os.getcwd() + "/Main/static/configFile/"
@@ -469,9 +479,6 @@ def hess2d():
         print("No HESS DATA PATH defined")
 
     data_store = DataStore.from_dir(hessDataPath)
-
-
-
     form = StartHess2D()
 
     listresfilesdict = []
@@ -506,9 +513,17 @@ def hess2d():
         geom_image = geom.to_image().to_cube([energy_axis.squash()])
 
         # Make the exclusion mask
+        # LOAD EXCLUDED regions
+        excluded_regions_list = pd.read_csv(resPath+res_analysisName+'/excludedregions_'+res_analysisName+'.csv')
+        print("EXCLUDED REGIONS")
+        print(excluded_regions_list)
         pointing = SkyCoord(ra_src, dec_src, unit="deg", frame="icrs")
-        regions = CircleSkyRegion(center=SkyCoord(ra_src, dec_src, unit="deg"), radius=0.5 *u.deg)
-        exclusion_mask = ~geom_image.region_mask([regions])
+        regions = [CircleSkyRegion(center=SkyCoord(ra_src, dec_src, unit="deg"), radius=0.3 *u.deg)]
+        if len(excluded_regions_list) >0:
+            for i in range(len(excluded_regions_list)):
+                regions = regions + [CircleSkyRegion(center=SkyCoord(str(list(excluded_regions_list['ra'])[0])+" deg", str(list(excluded_regions_list['dec'])[0])+" deg"), radius=list(excluded_regions_list['radius'])[0] * u.deg)]
+        ######
+        exclusion_mask = ~geom_image.region_mask(regions)
         exclusion_mask.geom
 
         print("### Ring background ... #####")
@@ -559,7 +574,6 @@ def hess2d():
 @main.route("/tuto", methods=['GET'])
 def tuto():
     return render_template('main/tutorial.html')
-
 
 @main.route("/getCoordFromSource/<string:source>", methods=['GET','POST'])
 def getCoordFromSource(source):
