@@ -112,7 +112,10 @@ def spectrum1D():
                     radius=0.0 * u.deg,
                 )
 
-                excluded_regions_list = pd.read_csv(resPath+res_analysisName+'/excludedregions_'+res_analysisName+'.csv')
+                try:
+                    excluded_regions_list = pd.read_csv(resPath+res_analysisName+'/excludedregions_'+res_analysisName+'.csv')
+                except:
+                    excluded_regions_list = pd.DataFrame.from_dict({})
                 print("EXCLUDED REGIONS")
                 print(excluded_regions_list)
                 pointing = SkyCoord(ra_src, dec_src, unit="deg", frame="icrs")

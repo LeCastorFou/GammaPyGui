@@ -193,6 +193,7 @@ def hessana():
             df_config = pd.read_csv(fileConfig)
             excludedRegionHESS = list(df_config['excludedRegionHESS'])[0]
         except:
+            excludedRegionHESS = []
             print("No HESS excluded regions")
 
         table = Table.read(hessDataPath+'/obs-index.fits.gz', format='fits')
@@ -516,7 +517,10 @@ def hess2d():
 
         # Make the exclusion mask
         # LOAD EXCLUDED regions
-        excluded_regions_list = pd.read_csv(resPath+res_analysisName+'/excludedregions_'+res_analysisName+'.csv')
+        try:
+            excluded_regions_list = pd.read_csv(resPath+res_analysisName+'/excludedregions_'+res_analysisName+'.csv')
+        except:
+            excluded_regions_list = pd.DataFrame.from_dict({})
         print("EXCLUDED REGIONS")
         print(excluded_regions_list)
         pointing = SkyCoord(ra_src, dec_src, unit="deg", frame="icrs")
