@@ -305,8 +305,7 @@ def hessana():
                 excluded_regions_list['Distance'] = [ math.sqrt((ra_obj-list(excluded_regions_list['ra'])[i])**2+(dec_obj-list(excluded_regions_list['dec'])[i])**2 ) for i in range(len(excluded_regions_list))]
                 search_size = np.max ([form.map_size_X.data,form.map_size_Y.data])
                 excluded_regions_list =  excluded_regions_list[excluded_regions_list['Distance'] < search_size]
-                if len(excluded_regions_list) > 0:
-                    excluded_regions_list.to_csv(resPath+res_analysisName+'/excludedregions_'+res_analysisName+'.csv')
+                excluded_regions_list.to_csv(resPath+res_analysisName+'/excludedregions_'+res_analysisName+'.csv')
 
                 print("### POSITION #####")
                 print(ra_obj)
@@ -314,7 +313,7 @@ def hessana():
                 print(search_size)
                 print(excluded_regions_list)
 
-                all_circle_regions = []
+                all_circle_regions = [CircleSkyRegion(center=SkyCoord(str(ra_obj)+" deg", str(dec_obj)+" deg"), radius=0.3 * u.deg)]
                 for i in range(len(excluded_regions_list)):
                     all_circle_regions = all_circle_regions + [CircleSkyRegion(center=SkyCoord(str(list(excluded_regions_list['ra'])[0])+" deg", str(list(excluded_regions_list['dec'])[0])+" deg"), radius=list(excluded_regions_list['radius'])[0] * u.deg)]
                 exclusion_mask = ~geom.region_mask(regions=all_circle_regions)
