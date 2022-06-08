@@ -27,30 +27,47 @@
           <p>
             First of all the user must defined a path to his data local storage. Go to "Account config". For the moment only H.E.S.S. data path are available. In the form you must provide the absolute path where are located the
             hdu-index.fits and the obs-index.fits. Once this is done the GUI should automaticaly propose to you the available sources for analysis.
+            If you have the excluded regions csv file you can put the path to it in the corresponding box.
+            It is possible to connect this tool with the HESS long term web summary. This allows to get the data quality plots for the run list you provide with your analysis.
+            To do so, if you are connected via a trusted IP allowing you to navigate to the long term web summary just put the url in the corresponding box.
           </p>
 
           <h2 class="titular">H.E.S.S analysis </h2>
-          <p>To perform H.E.S.S. Analysis , go to "Analysis" then on the left menu chosse "H.E.S.S. analysis". Belllow the left menu you have a form that you can fill.</p>
+          <p>To perform H.E.S.S. Analysis , go to "Analysis set up" then on the left menu </p>
           <p>
           <ul style="color:white">
             <li>Choose a name for your analysis (if you already performed an analysis with this name an index _%i is added)</li>
             <li>Select an available source (depends on your fits files location see above)</li>
             <li>Defined a min an a max run where to performe the analysis</li>
             <li>Or select a run list in txt format </li>
-            <li>Clic on Launch analysis </li>
-            <li>Once the browser stops loading ,your analysis is performed. Your results file are available in $PATHTOGUI/GammaPyGui/Main/static/results/NAME_OF_ANALYSIS  </li>
+            <li>Modify the parameters</li>
+            <li>Clic on "Prepare data analysis" </li>
+            <li>Once the browser stops loading ,your analysis is ready to be performed. Your config files are available in $PATHTOGUI/GammaPyGui/Main/static/results/NAME_OF_ANALYSIS  </li>
           </ul>
           </p>
 
+          <h2 class="titular">H.E.S.S 2D maps </h2>
+          <ul style="color:white">
+            <li>Choose a previously prepared analysis </li>
+            <li>Modify the parameters</li>
+            <li> Clic on Launch 2D analysis </li>
+            <li> Once the browser stops loading ,your 2D analysis is performed. Your results file are available in $PATHTOGUI/GammaPyGui/Main/static/results/NAME_OF_ANALYSIS  </li>
+          </ul>
 
           <h2 class="titular">H.E.S.S spectrum </h2>
           <ul style="color:white">
-            <li>Choose a name for your analysis (you can choose an existing analysis folder)</li>
-            <li>Select an available source (depends on your fits files location see above)</li>
-            <li>Defined a min an a max run where to performe the analysis</li>
-            <li> Or select a run list in txt format </li>
+            <li>Choose a previously prepared analysis </li>
+            <li>Choose a model and starting parameters for the fits </li>
             <li> Clic on Launch spectrum </li>
             <li> Once the browser stops loading ,your analysis is performed. Your results file are available in $PATHTOGUI/GammaPyGui/Main/static/results/NAME_OF_ANALYSIS  </li>
+          </ul>
+
+          <h2 class="titular">H.E.S.S data quality </h2>
+          <ul style="color:white">
+            <li>Check that the path to long term web summary is filled in the account config</li>
+            <li>Choose a previously prepared analysis </li>
+            <li> Clic on Launch data quality </li>
+            <li> Once the browser stops loading ,your plots are  are available in $PATHTOGUI/GammaPyGui/Main/static/results/NAME_OF_ANALYSIS  </li>
           </ul>
 
           <h2 class="titular">CTA simulations </h2>

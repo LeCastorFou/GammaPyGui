@@ -332,7 +332,7 @@ h1, h2, p, a, span{
 		/******************************************** LEFT CONTAINER *****************************************/
 		.left-container {}
 			.menu-box {
-				
+
 			}
 				.menu-box .titular {
 					background: #11a8ab;
@@ -1086,3 +1086,6 @@ h1, h2, p, a, span{
 						background: #e64c65;
 						border-radius: 100%;
 					}
+.flashes {
+  color: #ffffff;
+}

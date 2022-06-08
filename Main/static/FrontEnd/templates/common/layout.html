@@ -1,6 +1,6 @@
 <link href="{{ url_for('static', filename='FrontEnd/styles/mainstyles.css') }}" rel="stylesheet" type="text/css" media="all">
 <link href="{{ url_for('static', filename='FrontEnd/styles/customform.css') }}" rel="stylesheet" type="text/css" media="all">
-<script type="text/javascript" src="{{ url_for('static', filename='FrontEnd/js/form.js') }}"></script>
+
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -45,15 +45,26 @@
             </div>
         </header>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                   <li>{{ message }}</li>
-                {% endfor %}
-            {% endif %}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul id='flashesmsg' class=flashes>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
         {% endwith %}
 
         {% block content %}{% endblock %}
 
     </div> <!-- end main-container -->
 </body>
+
+<script type="text/javascript">
+// close the div in 5 secs
+window.setTimeout("closeHelpDiv();", 5000);
+
+function closeHelpDiv(){
+document.getElementById("flashesmsg").style.display=" none";
+}
+</script>

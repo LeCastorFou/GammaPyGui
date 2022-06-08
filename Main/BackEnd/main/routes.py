@@ -80,6 +80,7 @@ def home():
 
                 fig = px.density_heatmap(df, x="RA", y="DEC",nbinsx=50, nbinsy=50)
                 graph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+                flash("Analysis done", 'success')
 
                 return render_template('main/index.html',form = form, graphJSON = graph)
             else:
@@ -129,6 +130,8 @@ def account():
             df_config = pd.DataFrame.from_dict({'hessDataPath':[hessDataPath_new],'ctaIRFSpath':[ctaIRFSpath_new]
             ,'excludedRegionHESS':[excludedRegionHESS] ,'linkWebSummary':[linkWebSummary] })
             df_config.to_csv(fileConfig)
+            flash("Saved", 'success')
+            return render_template('main/accountConfig.html', form = form)
 
         elif request.method ==  'GET':
             if not confExist:
@@ -540,6 +543,9 @@ def hess2d():
         stacked.to_image().info_dict()
         print("=>",form.os_radius.data)
         estimator = ExcessMapEstimator(form.os_radius.data *u.deg, selection_optional=[])
+        print('dataset_on_off')
+        print(dataset_on_off)
+        print("#####")
         lima_maps = estimator.run(dataset_on_off)
 
         significance_map = lima_maps["sqrt_ts"]
