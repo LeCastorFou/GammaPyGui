@@ -25,7 +25,7 @@ def Get_MongoDB():
         Connect to mongo machine on port 27017 and get LeLardon
     '''
     # Connection Parameters
-    client = pymongo.MongoClient("mongodb://hess:CT5io!@51.15.204.85/HESS")
+    client = pymongo.MongoClient("mongodb://hess:@51.15.204.85/HESS")
     db = client['HESS']
     return db
 
